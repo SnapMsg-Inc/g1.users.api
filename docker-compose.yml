@@ -1,0 +1,8 @@
+version: '3.8'
+services: 
+    users-ms:
+        image: users-ms
+        build: .
+        container_name: users-ms
+        ports:
+            - 3000:3000
