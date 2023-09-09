@@ -12,5 +12,5 @@ dev:
     forward:
       - 3000:3000 
     sync:
-      - users-ms:/usr/src
+      - .:/usr/src
 
