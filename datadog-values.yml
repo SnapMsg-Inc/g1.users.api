@@ -3,3 +3,5 @@ datadog:
     enabled: true
     containerCollectAll: true
 
+  apiKeyExistingSecret: datadog-secret
+  site: us5.datadoghq.com

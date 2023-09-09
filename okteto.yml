@@ -4,13 +4,8 @@ build:
     dockerfile: Dockerfile
 
 deploy:
-  - name: Add datadog repo
-    command: helm repo add datadog https://helm.datadoghq.com
-  - name: Fetch last version of datadog
-    command: helm repo update
-  - name: Install datadog agent
-    command: helm install datadog -f datadog-values.yml --set datadog.site='datadoghq.com' --set datadog.apiKey=555c35b37ec810fddfb30ae20fd46a16 datadog/datadog 
-
+  compose:
+    file: docker-compose.yml
 
 dev:
   users-ms:
