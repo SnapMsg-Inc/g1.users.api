@@ -9,7 +9,7 @@ deploy:
   - name: Fetch last version of datadog
     command: helm repo update
   - name: Install datadog agent
-    command: helm install datadog -f datadog-values.yml --set datadog.site='datadoghq.com' --set datadog.apiKey=555c35b37ec810fddfb30ae20fd46a16 datadog/datadog 
+    command: helm install datadog-agent -f datadog-values.yml --set datadog.site='datadoghq.com' --set datadog.apiKey=555c35b37ec810fddfb30ae20fd46a16 datadog/datadog 
 
 
 dev:
