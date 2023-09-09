@@ -1,0 +1,21 @@
+build:
+  users-ms:
+    context: .
+    dockerfile: Dockerfile
+
+deploy:
+  - name: Add datadog repo
+    command: helm repo add datadog https://helm.datadoghq.com
+  - name: Fetch last version of datadog
+    command: helm repo update
+  - name: Install datadog agent
+    command: helm install RELEASE_NAME -f datadog-values.yml --set datadog.site='datadoghq.com' --set datadog.apiKey=555c35b37ec810fddfb30ae20fd46a16 datadog/datadog 
+
+
+dev:
+  users-ms:
+    forward:
+      - 3000:3000 
+    sync:
+      - users-ms:/usr/src
+
