@@ -10,4 +10,4 @@ RUN pip install -r requirements.txt
 
 EXPOSE 3000
 
-CMD ["NEW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin run-program", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "3000"] 
+CMD ["NEW_RELIC_CONFIG_FILE=newrelic.ini newrelic-admin run-program uvicorn src.main:app --host 0.0.0.0 --port 3000"] 
