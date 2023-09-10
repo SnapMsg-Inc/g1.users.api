@@ -3,6 +3,7 @@ build:
     context: .
     dockerfile: Dockerfile
 
+    
 deploy:
   compose:
     file: docker-compose.yml
@@ -14,4 +15,8 @@ dev:
       - 5432:users-db:5432
     sync:
       - .:/usr/snapmsg-users
+
+  haproxy-exporter:
+    forward:
+      - 3000:users-ms:3000
 
