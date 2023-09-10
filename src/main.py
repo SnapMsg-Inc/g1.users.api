@@ -1,7 +1,5 @@
 from fastapi import FastAPI
 
-import users
-
 
 app = FastAPI()
 
@@ -13,7 +11,7 @@ async def root():
 #
 #    Users routes
 #
-app.get("/users")(users.get_users)
-app.post("/users")(users.create_users)
+#app.get("/users")(users.get_users)
+#app.post("/users")(users.create_users)
 
 

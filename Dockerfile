@@ -1,6 +1,6 @@
 FROM python:3.9
 
-WORKDIR /usr/src
+WORKDIR /usr/
 
 COPY . .
 
@@ -9,6 +9,7 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
 EXPOSE 3000
+EXPOSE 5432
 
 ENV NEW_RELIC_CONFIG_FILE=newrelic.ini
 

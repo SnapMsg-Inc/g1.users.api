@@ -10,7 +10,8 @@ deploy:
 dev:
   users-ms:
     forward:
-      - 3000:3000 
+      - 3000:3000
+      - 5432:5432
     sync:
-      - .:/usr/src
+      - .:/usr/
 
