@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 
+import psycopg2
+
 
 app = FastAPI()
 
@@ -7,7 +9,13 @@ app = FastAPI()
 async def root():
 	return {"message": "Users microsevice"}
 
-
+con = psycopg2.connect(
+	database="okteto",
+	user="okteto",
+	password="okteto",
+	host="users-db",
+	port= '5432'
+)
 #
 #    Users routes
 #
