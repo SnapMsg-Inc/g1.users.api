@@ -1,8 +1,5 @@
 version: '3.8'
 
-volumes:
-  prometheus-data:    
-
 services: 
   users-ms:
     image: users-ms
@@ -10,36 +7,20 @@ services:
     container_name: users-ms
     ports:
       - 3000:3000
-
-  prometheus:
-    image: prom/prometheus:latest
-    container_name: prometheus
-    restart: unless-stopped
+  dd-agent: 
+    image: gcr.io/datadoghq/agent:7
+    container_name: dd-agent
+    links:
+      - users-ms
+    environment:
+      - DD_API_KEY=555c35b37ec810fddfb30ae20fd46a16
+      - DD_SITE=us5.datadoghq.com
+      - DD_APM_ENABLED=true
+      - DD_APM_NON_LOCAL_TRAFFIC=true
+      - DD_SYSTEM_PROBE_ENABLED=true
+      - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
+      - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-      - prometheus-data:/prometheus
-    ports:
-      - 9090:9090
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention.time=1y'
-      - '--web.enable-lifecycle'
-
-  node-exporter:
-    image: quay.io/prometheus/node-exporter:latest
-    container_name: node-exporter
-    command:
-      - '--path.rootfs=/host'
-    network_mode: host
-    pid: host
-    restart: unless-stopped
-    volumes:
+      - './ddconf.yml:/etc/datadog-agent/conf.d/ddconf.yml
       - '/:/host'
-
-  haproxy-exporter:
-    image: prom/haproxy-exporter
-    container_name: haproxy-exporter
-    command:
-      - '--haproxy.scrape-uri=http://users-ms/haproxy?stats;csv'
 

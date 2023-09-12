@@ -16,7 +16,6 @@ dev:
     sync:
       - .:/usr/snapmsg-users
 
-  haproxy-exporter:
+  dd-agent:
     forward:
       - 3000:users-ms:3000
-
