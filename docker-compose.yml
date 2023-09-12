@@ -21,6 +21,6 @@ services:
       - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
       - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
     volumes:
-      - './ddconf.yml:/etc/datadog-agent/conf.d/ddconf.yml
+      - './ddconf.yml:/etc/datadog-agent/conf.d/ddconf.yml'
       - '/:/host'
 
