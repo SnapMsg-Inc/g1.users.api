@@ -10,7 +10,7 @@ async def root():
 	return {"message": "Users microsevice"}
 
 con = psycopg2.connect(
-	database="users",
+	database="usersdb",
 	user="snapmsg",
 	password="1234",
 	host="users-db",
