@@ -1,6 +1,6 @@
-# Users-ms
+# Users-microservice
 
-Microservicio de usuarios de la aplicacion SnapMsg.
+Microservice for the SnapMsg API. 
 
 ## Getting Started
 
