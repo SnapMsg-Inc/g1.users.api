@@ -1,3 +1,5 @@
+name: g1.users.api
+
 build:
   users-ms:
     context: .
