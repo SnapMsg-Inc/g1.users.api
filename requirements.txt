@@ -5,3 +5,5 @@ pydantic==2.3.0
 SQLAlchemy==2.0.20
 psycopg2==2.9.7
 newrelic==9.0.0
+pytest==7.2.1
+httpx==0.23.3

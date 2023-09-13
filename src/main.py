@@ -16,6 +16,7 @@ con = psycopg2.connect(
 	host="users-db",
 	port= '5432'
 )
+
 #
 #    Users routes
 #
@@ -26,6 +27,5 @@ app.delete("/users/{uid}")(users.delete_user)
 
 app.post("/users/{uid}/follow/{otheruid}", users.follow_user)
 app.delete("/users/{uid}/follow/{otheruid}", users.unfollow_user)
-
 app.get("/users/recommended")(users.get_recommended)
 
