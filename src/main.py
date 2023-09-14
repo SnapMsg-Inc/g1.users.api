@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from dbconf import engine, Session
-from models.user import Base, User
+from models import Base
 from routes import users
 from sqlalchemy import MetaData
 
@@ -9,6 +9,7 @@ import psycopg2
 
 app = FastAPI()
 
+# create tables specified with declarative base
 Base.metadata.create_all(bind=engine)
 
 @app.get("/")
