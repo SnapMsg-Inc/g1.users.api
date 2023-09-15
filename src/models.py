@@ -1,20 +1,43 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import String, Boolean, Integer, Column
+from sqlmodel import Field, SQLModel, Column, JSON
+from typing import List, Optional
 
-Base = declarative_base()
 
-class User(Base):  # for request serialization
-	__tablename__="users"
+class User(SQLModel, table=True): 
+	__tablename__ = "users"	
 
-	id = Column(String(100), primary_key=True)
-	email = Column(String(254), nullable=False)
-	fullname = Column(String(50), nullable=False)
-	nick = Column(String(30), nullable=False)
-	interests = Column(String(209), nullable=False)
-	followers = Column(Integer, default=0, nullable=False) 
-	followings = Column(Integer, default=0, nullable=False) 
-	zone = Column(String(200), nullable=False)
-	isadmin = Column(Boolean, nullable=False, default=False)
+	uid: str = Field(default=None, primary_key=True)
+	email: str
+	fullname: str
+	nick: str
+	interests: List[str] = Field(default=None, sa_column=Column(JSON))
+	followers: int = 0
+	followings: int = 0
+	zone: str
+	is_admin: bool = False
 
-	
+
+class UserCreate(SQLModel): 
+	email: str
+	fullname: str
+	nick: str
+	interests: List[str] = Field(default=None, sa_column=Column(JSON))
+	zone: str
+
+
+class UserRead(SQLModel): 
+	uid: str
+	email: Optional[str] = ""
+	fullname: Optional[str] = ""
+	nick: str
+	interests: List[str] = Field(default=None, sa_column=Column(JSON))
+	followers: int
+	followings: int
+	zone: Optional[str] = ""
+	is_admin: bool
+
+
+class UserUpdate(SQLModel): 
+	nick: str
+	interests: List[str] = Field(default=None, sa_column=Column(JSON))
+
 
