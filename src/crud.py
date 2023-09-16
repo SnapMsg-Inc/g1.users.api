@@ -9,6 +9,7 @@ def read_users(limit: int, page: int, uid: str, email: str, nick: str):
 	nick = nick.lower()
 
 	with Session(engine) as db:
+		# if any param = "", all results are returned
 		query = select(User).where(User.uid.contains(uid))
 		query = query.where(User.email.contains(email))
 		query = query.where(User.nick.contains(nick))
