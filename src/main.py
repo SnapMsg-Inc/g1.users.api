@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Depends
 from typing import List, Optional
-from .models import User, UserCreate, UserUpdate
+from .models import User, UserCreate, UserRead, UserUpdate
 from .database import init_tables
 from . import crud
 
@@ -15,45 +15,49 @@ def on_startup():
 
 @app.get("/")
 async def root():
-	return {"message": "Users microsevice"}
+	return {"message": "users microsevice"}
 
 
 @app.post("/users/{uid}", status_code=201)
 async def create_user(uid: str, user: UserCreate):
 	crud.create_user(uid, user)
-	return {"message": "User created"}
+	return {"message": "user created"}
 
 
 @app.get("/users", response_model=List[User])
-async def get_users(uid: str = "", email: str = "", nick: str = "", page: int = 0, limit: int = Query(default=100, lte=100)):
-	users = crud.read_users(limit, page, uid, email, nick)
+async def get_users(user: UserRead = Depends(), limit: int = Query(default=100, lte=100), page: int = 0):
+	users = crud.read_users(user, limit, page)
 	return users
 
 
 @app.patch("/users/{uid}")
 async def update_user(uid: str, user: UserUpdate):
 	crud.update_user(uid, user)
-	return {"message": "User updated"}
+	return {"message": "user updated"}
 
 
 @app.delete("/users/{uid}")
-async def delete_user(uid):
-	return {"message": "User deleted"}
-
-
-@app.post("/users/{uid}/follow/{otheruid}")
-async def follow_user(uid, otheruid):
-	return {"message": "Following added"}
-
-
-@app.delete("/users/{uid}/follow/{otheruid}")
-async def unfollow_user(uid, otheruid):
-	return {"message": "Following removed"}
+async def delete_user(uid: str):
+	crud.delete_user(uid)
+	return {"message": "user deleted"}
 
 
 @app.get("/users/{uid}/recommended")
-async def get_recommended(uid) -> List[User]:
+async def get_recommended(uid: str) -> List[User]:
 	return {"message": "Recommended users"}
+
+
+
+@app.post("/users/{uid}/follows/{otheruid}")
+async def follow_user(uid: str, otheruid: str):
+	crud.follow_user(uid, otheruid)
+	return {"message": "Follow added"}
+
+
+@app.delete("/users/{uid}/follows/{otheruid}")
+async def unfollow_user(uid, otheruid):
+	crud.unfollow_user(uid, otheruid)
+	return {"message": "Follow removed"}
 
 
 
