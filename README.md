@@ -39,7 +39,7 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 Inspiration, code snippets, etc.:
 
 - [FastAPI Documentation](https://fastapi.tiangolo.com/)
-- [Gin Tonic](https://www.gintonic.app/)
-- [Taller de Programación 2](https://taller-de-programacion-2.github.io/)
+- [SQLModel](https://sqlmodel.tiangolo.com/)
 - [Okteto](https://okteto.com/docs/)
+- [Taller de Programación 2](https://taller-de-programacion-2.github.io/)
 ```
