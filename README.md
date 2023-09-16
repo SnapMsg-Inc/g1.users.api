@@ -42,4 +42,3 @@ Inspiration, code snippets, etc.:
 - [SQLModel](https://sqlmodel.tiangolo.com/)
 - [Okteto](https://okteto.com/docs/)
 - [Taller de Programación 2](https://taller-de-programacion-2.github.io/)
-```
