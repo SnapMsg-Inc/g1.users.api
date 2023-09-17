@@ -5,7 +5,6 @@ from sqlmodel.pool import StaticPool
 
 from src.main import app, get_db
 from src.models import User, UserCreate, UserRead, UserUpdate, Follow
-from src.database import USERS_DB_URL, connect_args
 
 
 '''
@@ -14,6 +13,7 @@ from src.database import USERS_DB_URL, connect_args
 @pytest.fixture(name="db")
 def db_fixture():
 	# use in-memory database
+	connect_args = {"check_same_thread": False}
 	engine = create_engine("sqlite://", connect_args=connect_args, poolclass=StaticPool)
 	SQLModel.metadata.create_all(engine)
 	with Session(engine) as db: 
