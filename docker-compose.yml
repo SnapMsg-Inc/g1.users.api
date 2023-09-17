@@ -4,6 +4,7 @@ services:
   users-ms:
     image: users-ms
     build: .
+	target: prod
     container_name: users-ms
     ports:
       - 3000:3000
