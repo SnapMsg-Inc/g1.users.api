@@ -22,7 +22,7 @@ jobs:
       run: pytest test/
       
     - name: Generate coverage reports
-      run: coverage xml src/*
+      run: coverage xml src/*.py
       
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
