@@ -16,19 +16,12 @@ def create_user(uid: str, user: UserCreate):
 		db.refresh(db_user)
 
 
-def read_user(db: Session, uid: str):
-	db_user = db.get(User, uid)
-	if not db_user:
-		raise HTTPException(status_code=404, detail="user not found")
-	return db_user
-
-
 def read_users(user: UserRead, limit: int, page: int):
-	#TODO: add followers and followings params
 	user_query = user.dict(exclude_none=True)
 
 	with Session(engine) as db:
 		query = select(User).offset(page * limit).limit(limit)
+
 		# match the query params case insensitive
 		for k, v in user_query.items():
 			query = query.where(getattr(User, k).regexp_match(v, "i"))
@@ -60,16 +53,48 @@ def delete_user(uid: str):
 		db.commit()
 
 
-def get_recommended(uid: str):
+def read_recommended(uid: str):
 	return []
+
+
+def read_follows(uid: str, limit: int, page: int):
+	with Session(engine) as db:
+		query = select(Follow).offset(page * limit).limit(limit)
+		query = query.where(Follow.uid==uid)
+		db_follows = db.exec(query).all()
+		follows = []
+
+		for follow in db_follows:
+			db_user = db.get(User, follow.followed_uid)
+			follows.append(db_user)
+		return follows
+
+
+def read_followers(uid: str, limit: int, page: int):
+	with Session(engine) as db:
+		query = select(Follow).offset(page * limit).limit(limit)
+		query = query.where(Follow.followed_uid==uid)
+		db_follows = db.exec(query).all()
+		followers = []
+
+		for follower in db_follows:
+			db_user = db.get(User, follower.uid)
+			followers.append(db_user)
+		return followers
 
 
 def follow_user(uid: str, otheruid: str):
 	with Session(engine) as db:
 		# verify that both users exist
-		read_user(db, uid)
-		read_user(db, otheruid)
-		
+		db_user = db.get(User, uid)
+		db_other_user = db.get(User, uid)
+
+		if not db_user or not db_other_user:
+			raise HTTPException(status_code=404, detail="user not found")
+	
+		if db_user is db_other_user:
+			raise HTTPException(status_code=400, detail="self-following not allowed")
+
 		# verify that the follow does not exist
 		query = select(Follow).where(Follow.uid==uid).where(Follow.followed_uid==otheruid)
 		db_follow = db.exec(query).first()
@@ -83,8 +108,11 @@ def follow_user(uid: str, otheruid: str):
 def unfollow_user(uid: str, otheruid: str):
 	with Session(engine) as db:
 		# verify that both users exist
-		read_user(db, uid)
-		read_user(db, otheruid)
+		db_user = db.get(User, uid)
+		db_other_user = db.get(User, uid)
+
+		if not db_user or not db_other_user:
+			raise HTTPException(status_code=404, detail="user not found")
 
 		# verify that the follow exists
 		query = select(Follow).where(Follow.uid==uid).where(Follow.followed_uid==otheruid)
@@ -94,5 +122,6 @@ def unfollow_user(uid: str, otheruid: str):
 
 		db.delete(db_follow)
 		db.commit()
+
 
 
