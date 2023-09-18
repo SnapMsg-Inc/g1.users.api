@@ -21,6 +21,9 @@ test:        ## Run dockerized tests
 	- docker run --tty --name users-ms-test users-ms-test:latest
 	- @docker container rm -f users-ms-test > /dev/null 2>&1
 	- @docker image rm -f users-ms-test > /dev/null 2>&1
+
+format:      ## Format (yapf must be installed)
+	yapf -i --style google src/*.py test/*.py
 	
 clean:       ## Remove image 
 	docker image rm -f users-ms
