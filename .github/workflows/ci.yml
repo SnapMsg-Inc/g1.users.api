@@ -19,11 +19,11 @@ jobs:
         pip install -r requirements.txt
         pip install pytest httpx coverage
     - name: Run unit tests
-      run: pytest test/
+      run: coverage run -m pytest .
       
     - name: Generate coverage reports
-      run: coverage xml test/*.py src/*.py
-      
+      run: coverage xml
+     
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
       env:
