@@ -2,8 +2,13 @@ from fastapi import FastAPI, HTTPException, Query, Depends
 from sqlmodel import Session
 from typing import List, Optional, Annotated
 from .models import User, UserCreate, UserRead, UserUpdate
-from .database import init_tables
+from .database import engine, init_tables
 from . import crud
+
+import datadog 
+from ddtrace.runtime import RuntimeMetrics
+
+RuntimeMetrics.enable()
 
 app = FastAPI()
 

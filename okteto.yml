@@ -7,18 +7,19 @@ build:
 
     
 deploy:
-  compose:
-    file: docker-compose.yml
+  compose: docker-compose.yml
 
 dev:
   users-ms:
     forward:
       - 3000:3000
       - 5432:users-db:5432
+      - 8126:dd-agent:8126
     sync:
       - .:/usr/snapmsg-users
 
   dd-agent:
     forward:
+      - 8126:8126
       - 3000:users-ms:3000
 

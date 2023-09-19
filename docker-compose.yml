@@ -4,15 +4,16 @@ services:
   users-ms:
     image: users-ms
     build: .
-	target: prod
     container_name: users-ms
     ports:
       - 3000:3000
     restart: always
 
   dd-agent: 
-    image: gcr.io/datadoghq/agent:7
+    image: gcr.io/datadoghq/agent:latest
     container_name: dd-agent
+    ports:
+      - 8126:8126
     links:
       - users-ms
     environment:
@@ -23,6 +24,7 @@ services:
       - DD_SYSTEM_PROBE_ENABLED=true
       - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
       - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
+      - DD_REMOTE_CONFIGURATION_ENABLED=true
     volumes:
       - './ddconf.yml:/etc/datadog-agent/conf.d/ddconf.yml'
       - '/:/host'
