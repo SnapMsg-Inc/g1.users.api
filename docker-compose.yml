@@ -13,8 +13,6 @@ services:
   dd-agent: 
     image: gcr.io/datadoghq/agent:7
     container_name: dd-agent
-    ports:
-      - 8126:8126/tcp
     links:
       - users-ms
     environment:
@@ -25,7 +23,6 @@ services:
       - DD_SYSTEM_PROBE_ENABLED=true
       - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
       - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
-      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
     volumes:
       - './ddconf.yml:/etc/datadog-agent/conf.d/ddconf.yml'
       - '/:/host'
