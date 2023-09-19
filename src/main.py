@@ -5,6 +5,18 @@ from .models import User, UserCreate, UserRead, UserUpdate
 from .database import init_tables
 from . import crud
 
+import datadog 
+import ddtrace
+
+
+options = {
+    'statsd_host':'127.0.0.1',
+    'statsd_port':8125
+}
+
+datadog.initialize(**options)
+
+
 app = FastAPI()
 
 

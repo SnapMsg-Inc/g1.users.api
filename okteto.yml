@@ -4,7 +4,6 @@ build:
   users-ms:
     context: .
     dockerfile: Dockerfile
-
     
 deploy:
   compose:
@@ -15,6 +14,7 @@ dev:
     forward:
       - 3000:3000
       - 5432:users-db:5432
+      - 8126:dd-agent:8126
     sync:
       - .:/usr/snapmsg-users
 
