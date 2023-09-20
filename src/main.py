@@ -8,7 +8,15 @@ from . import crud
 import datadog 
 from ddtrace.runtime import RuntimeMetrics
 
+from ddtrace import tracer
+
+tracer.configure(
+    hostname='datadog-agent',
+    port=8126,
+)
+
 RuntimeMetrics.enable()
+
 
 app = FastAPI()
 
