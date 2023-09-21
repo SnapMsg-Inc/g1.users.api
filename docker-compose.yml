@@ -1,50 +1,79 @@
 version: '3.8'
 
-services: 
+services:
   users-ms:
-    depends_on: 
-      - datadog_agent
-    image: users-ms
-    networks:
-      - backend 
-    build: .
-    container_name: users-ms
+    build:
+      context: .
+      target: prod
     ports:
-      - 3000:3000
+      - "3000:3000"
     environment:
-      - DD_TRACE_AGENT_PORT=8126
-      - DD_AGENT_HOST=datadog-agent
-      - DD_TRACE_HOST=datadog-agent
-      #- DD_TRACE_API_VERSION=v0.4
-      #- DD_REMOTE_CONFIGURATION_ENABLED=false
-    restart: always
-
-  datadog-agent: 
-    image: datadog/agent:latest
-    container_name: datadog-agent
-    networks:
-      - backend 
-#    ports:
-#      - 8126:8126/tcp
-    links:
-      - users-ms
+      - DD_SERVICE=users-ms
+      - DD_LOGS_INJECTION=true
+      - DD_ENV=prod
+    depends_on:
+      - users-db
+  
+  users-db:
+    image: postgres:latest
     environment:
-      - DD_API_KEY=555c35b37ec810fddfb30ae20fd46a16
-      - DD_APP_KEY=df8740cdddefaee14fce3923094b45dd32efd79c
-      - DD_SITE=us5.datadoghq.com
-      - DD_APM_ENABLED=true
-      - DD_APM_NON_LOCAL_TRAFFIC=true
-      #- DD_TRACE_STARTUP_LOGS=true
-      # - DD_SYSTEM_PROBE_ENABLED=true
-      # - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
-      # - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
-      # - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
-      - DD_REMOTE_CONFIGURATION_ENABLED=true
+      POSTGRES_USER: snapmsg
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: usersdb
     volumes:
-      - './ddconf.yml:/etc/datadog-agent/conf.d/datadog.yml'
-      - '/:/'
+      - postgres_data:/var/lib/postgresql/data
 
-networks:
-  backend:
+volumes:
+  postgres_data:
+
+
+# version: '3.8'
+
+# services: 
+#   users-ms:
+#     depends_on: 
+#       - datadog_agent
+#     image: users-ms
+#     networks:
+#       - backend 
+#     build: .
+#     container_name: users-ms
+#     ports:
+#       - 3000:3000
+#     environment:
+#       - DD_TRACE_AGENT_PORT=8126
+#       - DD_AGENT_HOST=datadog-agent
+#       - DD_TRACE_HOST=datadog-agent
+#       #- DD_TRACE_API_VERSION=v0.4
+#       #- DD_REMOTE_CONFIGURATION_ENABLED=false
+#     restart: always
+
+#   datadog-agent: 
+#     image: datadog/agent:latest
+#     container_name: datadog-agent
+#     networks:
+#       - backend 
+# #    ports:
+# #      - 8126:8126/tcp
+#     links:
+#       - users-ms
+#     environment:
+#       - DD_API_KEY=555c35b37ec810fddfb30ae20fd46a16
+#       - DD_APP_KEY=df8740cdddefaee14fce3923094b45dd32efd79c
+#       - DD_SITE=us5.datadoghq.com
+#       - DD_APM_ENABLED=true
+#       - DD_APM_NON_LOCAL_TRAFFIC=true
+#       #- DD_TRACE_STARTUP_LOGS=true
+#       # - DD_SYSTEM_PROBE_ENABLED=true
+#       # - DD_APM_RECEIVER_SOCKET=/opt/datadog/apm/inject/run/apm.socket
+#       # - DD_DOGSTATSD_SOCKET=/opt/datadog/apm/inject/run/dsd.socket
+#       # - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+#       - DD_REMOTE_CONFIGURATION_ENABLED=true
+#     volumes:
+#       - './ddconf.yml:/etc/datadog-agent/conf.d/datadog.yml'
+#       - '/:/'
+
+# networks:
+#   backend:
 
 

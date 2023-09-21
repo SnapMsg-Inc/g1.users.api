@@ -10,12 +10,12 @@ from ddtrace.runtime import RuntimeMetrics
 
 from ddtrace import tracer
 
-tracer.configure(
-    hostname='datadog-agent',
-    port=8126,
-)
+# tracer.configure(
+#     hostname='datadog-agent',
+#     port=8126,
+# )
 
-RuntimeMetrics.enable()
+# RuntimeMetrics.enable()
 
 
 app = FastAPI()
