@@ -8,13 +8,6 @@ from . import crud
 import datadog 
 from ddtrace.runtime import RuntimeMetrics
 
-from ddtrace import tracer
-
-# tracer.configure(
-#     hostname='datadog-agent',
-#     port=8126,
-# )
-
 RuntimeMetrics.enable()
 
 app = FastAPI()
@@ -23,7 +16,6 @@ app = FastAPI()
 def get_db():
     with Session(engine) as db:
         yield db
-
 
 @app.on_event("startup")
 def on_startup():
