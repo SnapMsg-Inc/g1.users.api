@@ -15,8 +15,7 @@ from ddtrace import tracer
 #     port=8126,
 # )
 
-# RuntimeMetrics.enable()
-
+RuntimeMetrics.enable()
 
 app = FastAPI()
 

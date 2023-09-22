@@ -4,9 +4,13 @@ from .models import User, UserCreate, UserRead, UserUpdate, Follow
 
 
 def create_user(db: Session, uid: str, user: UserCreate):
+
 	db_user = db.get(User, uid)
+	# verifico que el usuario no exista en la base de datos
 	if db_user:
 		raise HTTPException(status_code=400, detail="user already exists")
+	
+	# verifico que no falte ningun campo en el body
 
 	db_user = User.from_orm(user, {"uid" : uid})
 	db.add(db_user)
