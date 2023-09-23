@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Query, Depends
+from fastapi import FastAPI, HTTPException, Header, Query, Depends
 from sqlmodel import Session
 from typing import List, Optional, Annotated
 from .models import User, UserCreate, UserRead, UserUpdate
@@ -47,6 +47,31 @@ async def get_users(*,
     users = crud.read_users(db, user, limit, page)
     return users
 
+def read_user_by_uid(db: Session, requested_uid: str, request_uid: str):
+    db_user = db.get(User, requested_uid)
+    
+    if not db_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Si el usuario solicitante es el mismo que el usuario solicitado
+    if requested_uid == request_uid:
+        return db_user
+    else:
+        # Retorna solo la información pública del usuario
+        public_info = {
+            "uid": db_user.uid,
+            "nick": db_user.nick,
+            "birthdate": db_user.birthdate,
+            "zone": db_user.zone,
+            "description": db_user.description,
+            "ocupation": db_user.ocupation
+        }
+        return public_info
+
+@app.get("/users/{uid}", response_model=User)
+def get_user(uid: str, x_user_id: str = Header(None)):
+    with Session() as db:
+        return read_user_by_uid(db, uid, x_user_id)
 
 @app.patch("/users/{uid}")
 async def update_user(*,

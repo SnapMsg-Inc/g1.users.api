@@ -49,7 +49,7 @@ def test_get_users_one_user(db: Session, client: TestClient):
         email="example@example.com",
         fullname="John Doe",
         nick="eljuancho",
-        b_day=datetime (1990, 1, 1),
+        birthdate=datetime (1990, 1, 1),
         
     )
     db.add(db_user)
@@ -66,7 +66,7 @@ def test_get_users_one_user(db: Session, client: TestClient):
         assert user["email"] == db_user.email
         assert user["fullname"] == db_user.fullname
         assert user["nick"] == db_user.nick
-        assert user["b_day"] == str(db_user.b_day)
+        assert user["birthdate"] == str(db_user.birthdate)
 
 
 def test_create_duplicate_user(db: Session, client: TestClient):
@@ -79,7 +79,7 @@ def test_create_duplicate_user(db: Session, client: TestClient):
         "email": "example@example.com",
         "fullname": "John Doe",
         "nick": "eljuancho",
-        "b_day": "1990-01-01",
+        "birthdate": "1990-01-01",
     }
     response = client.post("/users/0", json=user_data)
     assert response.status_code == 201  # Cambiado a 200 como en tu ejemplo
@@ -99,3 +99,4 @@ def test_create_user_whitout_field(db: Session, client: TestClient):
     }
         response = client.post("/users/0", json=user_data)
         assert response.status_code == 422
+

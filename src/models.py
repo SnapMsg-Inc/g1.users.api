@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY
+from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY, Relationship
 from typing import Set, List, Optional
 from datetime import date
 
@@ -10,35 +10,43 @@ class User(SQLModel, table=True):
 	email: str
 	fullname: str
 	nick: str
-	b_day: date
+	birthdate: date
 	interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON), nullable=True)
 	#followers: Set[str] = Field(default=None , sa_column=Column(ARRAY(String())))
 	#followings: Set[str] = Field(default=None , sa_column=Column(ARRAY(String())))
 	zone: Optional[str] = Field(default=None, nullable=True)
 	is_admin: bool = False
+	follows: List["Follow"] = Relationship(back_populates="user")
+	description: Optional[str] = Field(default=None, nullable=True)
+	ocupation: Optional[str] = Field(default=None, nullable=True)
 
 
+	
 class UserCreate(SQLModel): 
 	email: str
 	fullname: str
 	nick: str
 	interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
 	zone: Optional[str] = Field(default=None, nullable=True)
-	b_day: date 
+	birthdate: date
+	description: Optional[str] = Field(default=None, nullable=True)
+	ocupation: Optional[str] = Field(default=None, nullable=True) 
 
 
 class UserRead(SQLModel): 
 	uid: Optional[str] = None
 	email: Optional[str] = None
 	nick: Optional[str] = None
+	description: Optional[str] = Field(default=None, nullable=True)
+	ocupation: Optional[str] = Field(default=None, nullable=True)
 
 
 class UserUpdate(SQLModel): 
 	nick: str
 	zone: str
 	interests: List[str] = Field(sa_column=Column(JSON))
-
-
+	description: str
+	ocupation: str
 
 class Follow(SQLModel, table=True):
 	__tablename__ = "follows"
@@ -46,6 +54,9 @@ class Follow(SQLModel, table=True):
 	# {uid} follows {followed_uid}
 	fid: Optional[int] = Field(default=None, primary_key=True)
 	uid: str
-	followed_uid: str
+	followed_uid: int = Field(foreign_key="users.uid")
+	user: User = Relationship(back_populates="follows")
+
+
 
 

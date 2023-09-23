@@ -8,4 +8,3 @@ engine = create_engine(USERS_DB_URL, echo=True)
 
 def init_tables():
 	SQLModel.metadata.create_all(engine)
-

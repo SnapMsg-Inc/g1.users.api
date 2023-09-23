@@ -1,7 +1,6 @@
 from fastapi import HTTPException
 from sqlmodel import Session, select, column
-from .models import User, UserCreate, UserRead, UserUpdate, Follow
-
+from .models import User, UserCreate, UserRead, UserUpdate
 
 def create_user(db: Session, uid: str, user: UserCreate):
 
@@ -9,8 +8,6 @@ def create_user(db: Session, uid: str, user: UserCreate):
 	# verifico que el usuario no exista en la base de datos
 	if db_user:
 		raise HTTPException(status_code=400, detail="user already exists")
-	
-	# verifico que no falte ningun campo en el body
 
 	db_user = User.from_orm(user, {"uid" : uid})
 	db.add(db_user)
@@ -54,33 +51,33 @@ def read_recommended(db: Session, uid: str):
 	return []
 
 
-def read_follow(db: Session, uid: str, otheruid: str):
-	query = select(Follow).where(Follow.uid==uid).where(Follow.followed_uid==otheruid)
-	return db.exec(query).all()
+# def read_follow(db: Session, uid: str, otheruid: str):
+# 	query = select(Follow).where(Follow.uid==uid).where(Follow.followed_uid==otheruid)
+# 	return db.exec(query).all()
 
 
-def read_follows(db: Session, uid: str, limit: int, page: int):
-	follows = []
-	query = select(Follow).offset(page * limit).limit(limit)
-	query = query.where(Follow.uid==uid)
-	db_follows = db.exec(query).all()
+# def read_follows(db: Session, uid: str, limit: int, page: int):
+# 	follows = []
+# 	query = select(Follow).offset(page * limit).limit(limit)
+# 	query = query.where(Follow.uid==uid)
+# 	db_follows = db.exec(query).all()
 
-	for follow in db_follows:
-		db_user = db.get(User, follow.followed_uid)
-		follows.append(db_user)
-	return follows
+# 	for follow in db_follows:
+# 		db_user = db.get(User, follow.followed_uid)
+# 		follows.append(db_user)
+# 	return follows
 
 
-def read_followers(db: Session, uid: str, limit: int, page: int):
-	followers = []
-	query = select(Follow).offset(page * limit).limit(limit)
-	query = query.where(Follow.followed_uid==uid)
-	db_follows = db.exec(query).all()
+# def read_followers(db: Session, uid: str, limit: int, page: int):
+# 	followers = []
+# 	query = select(Follow).offset(page * limit).limit(limit)
+# 	query = query.where(Follow.followed_uid==uid)
+# 	db_follows = db.exec(query).all()
 
-	for follower in db_follows:
-		db_user = db.get(User, follower.uid)
-		followers.append(db_user)
-	return followers
+# 	for follower in db_follows:
+# 		db_user = db.get(User, follower.uid)
+# 		followers.append(db_user)
+# 	return followers
 
 
 def follow_user(db: Session, uid: str, otheruid: str):
