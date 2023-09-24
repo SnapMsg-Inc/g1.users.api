@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY, Relationship
+from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY, Relationship, ForeignKey, PrimaryKeyConstraint
 from typing import Set, List, Optional
 from datetime import date
 
@@ -16,7 +16,7 @@ class User(SQLModel, table=True):
 	#followings: Set[str] = Field(default=None , sa_column=Column(ARRAY(String())))
 	zone: Optional[str] = Field(default=None, nullable=True)
 	is_admin: bool = False
-	follows: List["Follow"] = Relationship(back_populates="user")
+	#follows: List["Follow"] = Relationship(back_populates="user")
 	description: Optional[str] = Field(default=None, nullable=True)
 	ocupation: Optional[str] = Field(default=None, nullable=True)
 
@@ -48,15 +48,10 @@ class UserUpdate(SQLModel):
 	description: str
 	ocupation: str
 
-class Follow(SQLModel, table=True):
+class Follow(SQLModel, table=True):	
 	__tablename__ = "follows"
-
-	# {uid} follows {followed_uid}
-	fid: Optional[int] = Field(default=None, primary_key=True)
-	uid: str
-	followed_uid: int = Field(foreign_key="users.uid")
-	user: User = Relationship(back_populates="follows")
-
-
-
-
+	__table_args__ = (PrimaryKeyConstraint('uid', 'followed'),)
+		
+	uid: str = Field(sa_column=Column(String, ForeignKey('users.uid', ondelete='CASCADE')))
+	followed: str = Field(sa_column=Column(String, ForeignKey('users.uid', ondelete='CASCADE')))
+	
