@@ -1,6 +1,6 @@
 from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY
 from typing import Set, List, Optional
-
+from datetime import date
 
 class User(SQLModel, table=True): 
 	__tablename__ = "users"	
@@ -8,6 +8,7 @@ class User(SQLModel, table=True):
 	uid: str = Field(default=None, primary_key=True)
 	email: str
 	fullname: str
+	birthdate: date 
 	nick: str
 	interests: List[str] = Field(default=[], sa_column=Column(JSON))
 	#followers: Set[str] = Field(default=None , sa_column=Column(ARRAY(String())))
@@ -19,6 +20,7 @@ class User(SQLModel, table=True):
 class UserCreate(SQLModel): 
 	email: str
 	fullname: str
+	birthdate: date 
 	nick: str
 	interests: List[str] = Field(default=None, sa_column=Column(JSON))
 	zone: str
