@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY
+from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY, ForeignKey, PrimaryKeyConstraint
 from typing import Set, List, Optional
 
 
@@ -10,8 +10,6 @@ class User(SQLModel, table=True):
 	fullname: str
 	nick: str
 	interests: List[str] = Field(default=[], sa_column=Column(JSON))
-	#followers: Set[str] = Field(default=None , sa_column=Column(ARRAY(String())))
-	#followings: Set[str] = Field(default=None , sa_column=Column(ARRAY(String())))
 	zone: str
 	is_admin: bool = False
 
@@ -37,11 +35,20 @@ class UserUpdate(SQLModel):
 
 
 class Follow(SQLModel, table=True):
-	__tablename__ = "follows"
+	class Follow(SQLModel, table=True):
+		__tablename__ = "follows"
+		__table_args__ = (
+        PrimaryKeyConstraint("uid", "followed_uid"),
+    )
+	uid: str = Field(default=None, sa_column=Column(String, ForeignKey('users.uid', ondelete='CASCADE')))
+	followed_uid: str = Field(default=None, sa_column=Column(String, ForeignKey('users.uid', ondelete='CASCADE')))
 
-	# {uid} follows {followed_uid}
-	fid: Optional[int] = Field(default=None, primary_key=True)
-	uid: str
-	followed_uid: str
+	# __tablename__ = "follows"
 
-
+	# # {uid} follows {followed_uid}
+	# fid: Optional[int] = Field(default=None, primary_key=True, auto_increment=True)
+	# uid: str = Field(default=None, sa_column=Column(String, ForeignKey('users.uid', ondelete='CASCADE')))
+	# followed_uid: str = Field(default=None, sa_column=Column(String, ForeignKey('users.uid', ondelete='CASCADE')))
+	# # fid: Optional[int] = Field(default=None, primary_key=True)
+	# # uid: str
+	# # followed_uid: str
