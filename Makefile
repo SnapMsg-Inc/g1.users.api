@@ -28,3 +28,7 @@ format:      ## Format (yapf must be installed)
 clean:       ## Remove image 
 	docker image rm -f users-ms
 
+compose:  ## Stop services, remove containers, and start services again
+	docker compose down --remove-orphans 
+	docker rmi users-ms-users-ms
+	docker compose up --build 
