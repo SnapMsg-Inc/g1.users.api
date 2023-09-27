@@ -89,5 +89,5 @@ def test_user_self_follow_not_allowed(db, testUser1):
         follow_user(db, uid1, uid1)
 
     # Assert
-    assert str(excinfo.value.detail) == "self-following not allowed"
+    assert str(excinfo.value.detail) == "you can't follow yourself"
 

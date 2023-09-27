@@ -62,7 +62,7 @@ def test_user_unfollow_not_following(db, testUser1, testUser2):
         unfollow_user(db, uid1, uid2)
         assert str(excinfo.value.detail) == "follow not found"
     
-def test_user_unfollow_not_exist(db, testUser1, testUser2):
+def test_user_not_exist(db, testUser1, testUser2):
     # Arrange
     uid1 = "unique_id_1"
     uid2 = "unique_id_2"

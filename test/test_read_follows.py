@@ -63,3 +63,5 @@ def test_read_follows_happy_path(db, testUser1):
 
     assert follows[0].uid == uid2
     assert follows[1].uid == uid3
+
+    

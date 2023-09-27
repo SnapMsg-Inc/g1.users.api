@@ -18,7 +18,6 @@ def testUser1():
         interests=["music", "movies"],
     )
 
-
 @pytest.fixture
 def testUser2():
     return UserCreate(
@@ -29,6 +28,7 @@ def testUser2():
         zone="UK",
         interests=["music", "movies"],
     )
+
 @pytest.fixture
 def testUser3():
     return UserCreate(
@@ -55,7 +55,6 @@ def test_read_users_happy_path(db, testUser1):
 
     # Assert
     assert len(users) == 1
-
 
     assert users[FIRST_USER].fullname == testUser1.fullname
     assert users[FIRST_USER].email == testUser1.email
