@@ -7,12 +7,6 @@ from src.crud import read_users, create_user
 
 FIRST_USER = 0
 
-# def test_read_users_no_users(db):
-
-#     users = read_users(db, User, 100, 0)
-#     assert len(users) == 0
-# assert users == []
-
 @pytest.fixture
 def testUser1():
     return UserCreate(
@@ -101,7 +95,3 @@ def test_read_users_by_email(db, testUser1, testUser2, testUser3):
     assert users[FIRST_USER].birthdate == testUser1.birthdate
     assert users[FIRST_USER].nick == testUser1.nick
     assert users[FIRST_USER].zone == testUser1.zone
-    
-
-
-
