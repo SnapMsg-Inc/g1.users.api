@@ -51,11 +51,6 @@ def read_recommended(db: Session, uid: str):
 	return []
 
 
-# def read_follow(db: Session, uid: str, otheruid: str):
-# 	query = select(Follow).where(Follow.uid==uid).where(Follow.followed_uid==otheruid)
-# 	return db.exec(query).all()
-
-
 def read_follows(db: Session, uid: str, limit: int, page: int):
 	
 	if not db.get(User, uid):
