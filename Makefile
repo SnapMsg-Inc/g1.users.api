@@ -18,7 +18,7 @@ run: build   ## Run the docker image (and build)
 
 test:        ## Run dockerized tests
 	docker build -t users-ms-test --target test .
-	- docker run -v --tty --name users-ms-test users-ms-test:latest pytest -v
+	- docker run --tty --name users-ms-test users-ms-test:latest
 	- @docker container rm -f users-ms-test > /dev/null 2>&1
 	- @docker image rm -f users-ms-test > /dev/null 2>&1
 
@@ -28,7 +28,3 @@ format:      ## Format (yapf must be installed)
 clean:       ## Remove image 
 	docker image rm -f users-ms
 
-compose:  ## Stop services, remove containers, and start services again
-	docker compose down --remove-orphans 
-	docker rmi users-ms-users-ms
-	docker compose up --build 
