@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  users-ms:
+    build:
+      context: .
+      target: prod
+    ports:
+      - "3000:3000"
+    depends_on:
+      - users-db
+  
+  users-db:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: snapmsg
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: usersdb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+volumes:
+  postgres_data:
