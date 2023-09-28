@@ -2,13 +2,13 @@ from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY, ForeignKey, P
 from typing import Set, List, Optional
 from datetime import date
 
+
 class User(SQLModel, table=True): 
 	__tablename__ = "users"	
 	
 	uid: str = Field(default=None, primary_key=True)
 	email: str
 	fullname: str
-	birthdate: date 
 	nick: str
 	birthdate: date
 	interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON), nullable=True)
@@ -22,7 +22,6 @@ class User(SQLModel, table=True):
 class UserCreate(SQLModel): 
 	email: str
 	fullname: str
-	birthdate: date 
 	nick: str
 	interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
 	zone: Optional[str] = Field(default=None, nullable=True)

@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 */__python__
 .stignore
 config.json
+=======
+__python__
+>>>>>>> parent of 97eb247 (Merge branch 'feature_follows' into dev)
