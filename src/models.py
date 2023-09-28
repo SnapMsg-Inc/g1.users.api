@@ -16,9 +16,16 @@ class User(SQLModel, table=True):
 	is_admin: bool = False
 	description: Optional[str] = Field(default=None, nullable=True)
 	ocupation: Optional[str] = Field(default=None, nullable=True)
+	pic: str
 
 
+class UserPublic(SQLModel):
+	uid: str 
+	nick: str
+	interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
+	pic: str
 	
+
 class UserCreate(SQLModel): 
 	email: str
 	fullname: str

@@ -2,6 +2,7 @@ from fastapi import HTTPException
 from sqlmodel import Session, select, column
 from .models import User, UserCreate, UserRead, UserUpdate, Follow
 
+
 def create_user(db: Session, uid: str, user: UserCreate):
 
 	db_user = db.get(User, uid)
@@ -13,6 +14,11 @@ def create_user(db: Session, uid: str, user: UserCreate):
 	db.add(db_user)
 	db.commit()
 	db.refresh(db_user)
+
+
+def read_user(db: Session, uid: str):
+	query = select(User).where(User.uid == uid)
+	return db.exec(query).first()
 
 
 def read_users(db: Session, user: UserRead, limit: int, page: int):
