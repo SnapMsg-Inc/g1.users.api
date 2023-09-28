@@ -2,9 +2,10 @@ from fastapi import HTTPException
 from sqlmodel import Session, select, column
 from .models import User, UserCreate, UserRead, UserUpdate, Follow
 
-
 def create_user(db: Session, uid: str, user: UserCreate):
+
 	db_user = db.get(User, uid)
+	# verifico que el usuario no exista en la base de datos
 	if db_user:
 		raise HTTPException(status_code=400, detail="user already exists")
 
@@ -50,27 +51,30 @@ def read_recommended(db: Session, uid: str):
 	return []
 
 
-def read_follow(db: Session, uid: str, otheruid: str):
-	query = select(Follow).where(Follow.uid==uid).where(Follow.followed_uid==otheruid)
-	return db.exec(query).all()
-
-
 def read_follows(db: Session, uid: str, limit: int, page: int):
+	
+	if not db.get(User, uid):
+		raise HTTPException(status_code=404, detail="user not found")
+	
 	follows = []
 	query = select(Follow).offset(page * limit).limit(limit)
 	query = query.where(Follow.uid==uid)
 	db_follows = db.exec(query).all()
 
 	for follow in db_follows:
-		db_user = db.get(User, follow.followed_uid)
+		db_user = db.get(User, follow.followed)
 		follows.append(db_user)
 	return follows
 
 
 def read_followers(db: Session, uid: str, limit: int, page: int):
+
+	if not db.get(User, uid):
+		raise HTTPException(status_code=404, detail="user not found")
+	
 	followers = []
 	query = select(Follow).offset(page * limit).limit(limit)
-	query = query.where(Follow.followed_uid==uid)
+	query = query.where(Follow.followed==uid)
 	db_follows = db.exec(query).all()
 
 	for follower in db_follows:
@@ -81,39 +85,44 @@ def read_followers(db: Session, uid: str, limit: int, page: int):
 
 def follow_user(db: Session, uid: str, otheruid: str):
 	# verify that both users exist
+	
+	if uid == otheruid:
+		raise HTTPException(status_code=400, detail="you can't follow yourself")
+	
 	db_user = db.get(User, uid)
-	db_other_user = db.get(User, uid)
+	db_other_user = db.get(User, otheruid)
 
 	if not db_user or not db_other_user:
 		raise HTTPException(status_code=404, detail="user not found")
 	
-	if db_user is db_other_user:
-		raise HTTPException(status_code=400, detail="self-following not allowed")
-
-	# verify that the follow does not exist
-	if read_follow(db, uid, otheruid):
+	# verify that the follow doesn't exist
+	query = select(Follow).where(Follow.uid==uid).where(Follow.followed==otheruid)
+	db_follow = db.exec(query).first()
+	if db_follow:
 		raise HTTPException(status_code=400, detail="follow already exists")
-
-	db.add(Follow(uid=uid, followed_uid=otheruid))
+	
+	# create the follow row
+	db_follow = Follow(uid=uid, followed=otheruid)
+	db.add(db_follow)
 	db.commit()
 
 
 def unfollow_user(db: Session, uid: str, otheruid: str):
 	# verify that both users exist
+	if uid == otheruid:
+		raise HTTPException(status_code=400, detail="you can't unfollow yourself")
+	
 	db_user = db.get(User, uid)
-	db_other_user = db.get(User, uid)
+	db_other_user = db.get(User, otheruid)
 
 	if not db_user or not db_other_user:
 		raise HTTPException(status_code=404, detail="user not found")
 
 	# verify that the follow exists
-	query = select(Follow).where(Follow.uid==uid).where(Follow.followed_uid==otheruid)
+	query = select(Follow).where(Follow.uid==uid).where(Follow.followed==otheruid)
 	db_follow = db.exec(query).first()
 	if not db_follow:
 		raise HTTPException(status_code=404, detail="follow not found")
 
 	db.delete(db_follow)
 	db.commit()
-
-
-
