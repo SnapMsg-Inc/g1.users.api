@@ -10,13 +10,15 @@ def test_create_user_happy_path(db):
 
     # Arrange
     uid = "unique_id_1"
-    new_user = UserCreate(fullname="John", 
-                           email="john@example.com", 
-                           birthdate="1990-01-01",
-                           nick="eljuancho", 
-                           zone="Bogotá",  
-                           interests=["music", "movies"]
-                           )
+    new_user = UserCreate(
+		fullname="John", 
+        email="john@example.com", 
+        birthdate="1990-01-01",
+        nick="eljuancho", 
+        zone="Bogotá",  
+        interests=["music", "movies"],
+		pic="someurl"	
+    )
     # Act
     create_user(db, uid, new_user)
 

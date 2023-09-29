@@ -16,14 +16,14 @@ class User(SQLModel, table=True):
 	is_admin: bool = False
 	description: Optional[str] = Field(default=None, nullable=True)
 	ocupation: Optional[str] = Field(default=None, nullable=True)
-	pic: str
-
+	pic: Optional[str] = "" 
+	
 
 class UserPublic(SQLModel):
 	uid: str 
 	nick: str
 	interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
-	pic: str
+	pic: Optional[str]
 	
 
 class UserCreate(SQLModel): 
@@ -35,22 +35,23 @@ class UserCreate(SQLModel):
 	birthdate: date
 	description: Optional[str] = Field(default=None, nullable=True)
 	ocupation: Optional[str] = Field(default=None, nullable=True) 
+	pic: Optional[str]
 
 
 class UserRead(SQLModel): 
 	uid: Optional[str] = None
 	email: Optional[str] = None
 	nick: Optional[str] = None
-	description: Optional[str] = Field(default=None, nullable=True)
-	ocupation: Optional[str] = Field(default=None, nullable=True)
 
 
 class UserUpdate(SQLModel): 
-	nick: str
-	zone: str
+	nick: Optional[str]
+	zone: Optional[str]
 	interests: List[str] = Field(sa_column=Column(JSON))
-	description: str
-	ocupation: str
+	description: Optional[str]
+	ocupation: Optional[str]
+	pic: Optional[str]
+
 
 class Follow(SQLModel, table=True):	
 	__tablename__ = "follows"
