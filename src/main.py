@@ -57,10 +57,14 @@ def get_user(*, db: Session = Depends(get_db), uid: str):
 async def update_user(*,
                       db: Session = Depends(get_db),
                       uid: str,
-                      user: UserUpdate):
+                      user: Optional[UserUpdate] = None):
+    
+    if not user:
+        return {"message" : "nothing to update"}
+    
     crud.update_user(db, uid, user)
     return {"message": "user updated"}
-
+#docker container exec <container> "DROP TABLE users;"
 
 @app.delete("/users/{uid}")
 async def delete_user(*, db: Session = Depends(get_db), uid: str):

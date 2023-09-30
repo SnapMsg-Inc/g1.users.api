@@ -29,6 +29,7 @@ clean:       ## Remove image
 	docker image rm -f users-ms
 
 compose:  ## Stop services, remove containers, and start services again
-	docker compose down --remove-orphans 
-	docker rmi users-ms-users-ms
-	docker compose up --build 
+	- docker compose -f docker-compose-local.yml down --remove-orphans 
+	- docker rmi users-ms
+	docker compose -f docker-compose-local.yml up --build  
+

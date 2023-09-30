@@ -1,6 +1,7 @@
 from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY, ForeignKey, PrimaryKeyConstraint
-from typing import Set, List, Optional
-from datetime import date
+from typing import Set, List, Optional, Pattern, Annotated
+from datetime import datetime, date, timedelta
+from pydantic import validator, BaseModel
 
 
 class User(SQLModel, table=True): 
@@ -8,14 +9,14 @@ class User(SQLModel, table=True):
 	
 	uid: str = Field(default=None, primary_key=True)
 	email: str
-	fullname: str
+	fullname: str = Field(default=None, max_length=50)
 	nick: str
 	birthdate: date
 	interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON), nullable=True)
 	zone: Optional[str] = Field(default=None, nullable=True)
 	is_admin: bool = False
 	description: Optional[str] = Field(default=None, nullable=True)
-	ocupation: Optional[str] = Field(default=None, nullable=True)
+	ocupation: Optional[str] = Field(default=None, nullable=True, max_length=25)
 	pic: Optional[str] = "" 
 	
 
@@ -27,15 +28,15 @@ class UserPublic(SQLModel):
 	
 
 class UserCreate(SQLModel): 
-	email: str
+	email: str = Field(regex=r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$")
 	fullname: str
 	nick: str
-	interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
-	zone: Optional[str] = Field(default=None, nullable=True)
+	interests: Optional[List[str]] = []
+	zone: Optional[str] = None
 	birthdate: date
-	description: Optional[str] = Field(default=None, nullable=True)
-	ocupation: Optional[str] = Field(default=None, nullable=True) 
-	pic: Optional[str]
+	description: Optional[str] = None
+	ocupation: Optional[str] = None
+	pic: Optional[str] = None
 
 
 class UserRead(SQLModel): 
@@ -47,7 +48,7 @@ class UserRead(SQLModel):
 class UserUpdate(SQLModel): 
 	nick: Optional[str]
 	zone: Optional[str]
-	interests: List[str] = Field(sa_column=Column(JSON))
+	interests: Optional[List[str]]
 	description: Optional[str]
 	ocupation: Optional[str]
 	pic: Optional[str]
