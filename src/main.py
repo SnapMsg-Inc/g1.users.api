@@ -1,22 +1,14 @@
-from fastapi import FastAPI, HTTPException, Query, Depends
+from fastapi import FastAPI, HTTPException, Header, Query, Depends
 from sqlmodel import Session
 from typing import List, Optional, Annotated
-from .models import User, UserCreate, UserRead, UserUpdate
+from .models import User, UserPublic, UserCreate, UserRead, UserUpdate
 from .database import engine, init_tables
 from . import crud
 
 import datadog 
 from ddtrace.runtime import RuntimeMetrics
 
-from ddtrace import tracer
-
-tracer.configure(
-    hostname='datadog-agent',
-    port=8126,
-)
-
 RuntimeMetrics.enable()
-
 
 app = FastAPI()
 
@@ -24,7 +16,6 @@ app = FastAPI()
 def get_db():
     with Session(engine) as db:
         yield db
-
 
 @app.on_event("startup")
 def on_startup():
@@ -46,7 +37,7 @@ async def create_user(*,
     return {"message": "user created"}
 
 
-@app.get("/users", response_model=List[User])
+@app.get("/users", response_model=List[UserPublic])
 async def get_users(*,
                     db: Session = Depends(get_db),
                     user: UserRead = Depends(),
@@ -57,14 +48,23 @@ async def get_users(*,
     return users
 
 
+@app.get("/users/{uid}", response_model=User)
+def get_user(*, db: Session = Depends(get_db), uid: str):
+	return crud.read_user(db, uid)
+
+
 @app.patch("/users/{uid}")
 async def update_user(*,
                       db: Session = Depends(get_db),
                       uid: str,
-                      user: UserUpdate):
+                      user: Optional[UserUpdate] = None):
+    
+    if not user:
+        return {"message" : "nothing to update"}
+    
     crud.update_user(db, uid, user)
     return {"message": "user updated"}
-
+#docker container exec <container> "DROP TABLE users;"
 
 @app.delete("/users/{uid}")
 async def delete_user(*, db: Session = Depends(get_db), uid: str):
@@ -72,12 +72,12 @@ async def delete_user(*, db: Session = Depends(get_db), uid: str):
     return {"message": "user deleted"}
 
 
-@app.get("/users/{uid}/recommended", response_model=List[User])
+@app.get("/users/{uid}/recommended", response_model=List[UserPublic])
 async def get_recommended(*, db: Session = Depends(get_db), uid: str):
     return {"message": "recommended users"}
 
 
-@app.get("/users/{uid}/followers", response_model=List[User])
+@app.get("/users/{uid}/followers", response_model=List[UserPublic])
 def get_followers(*,
                   db: Session = Depends(get_db),
                   uid: str,
@@ -86,7 +86,7 @@ def get_followers(*,
     return crud.read_followers(db, uid, limit, page)
 
 
-@app.get("/users/{uid}/follows", response_model=List[User])
+@app.get("/users/{uid}/follows", response_model=List[UserPublic])
 def get_follows(*,
                 db: Session = Depends(get_db),
                 uid: str,
@@ -113,3 +113,4 @@ async def follow_user(*, db: Session = Depends(get_db), uid: str,
 async def unfollow_user(*, db: Session = Depends(get_db), uid, otheruid):
     crud.unfollow_user(db, uid, otheruid)
     return {"message": "follow removed"}
+

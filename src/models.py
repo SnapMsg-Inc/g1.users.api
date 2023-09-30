@@ -1,28 +1,42 @@
-from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY
-from typing import Set, List, Optional
-from datetime import date
+from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY, ForeignKey, PrimaryKeyConstraint
+from typing import Set, List, Optional, Pattern, Annotated
+from datetime import datetime, date, timedelta
+from pydantic import validator, BaseModel
 
 
 class User(SQLModel, table=True): 
 	__tablename__ = "users"	
-
+	
 	uid: str = Field(default=None, primary_key=True)
 	email: str
-	fullname: str
+	fullname: str = Field(default=None, max_length=50)
 	nick: str
-	interests: List[str] = Field(default=[], sa_column=Column(JSON))
-	#followers: Set[str] = Field(default=None , sa_column=Column(ARRAY(String())))
-	#followings: Set[str] = Field(default=None , sa_column=Column(ARRAY(String())))
-	zone: str
+	birthdate: date
+	interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON), nullable=True)
+	zone: Optional[str] = Field(default=None, nullable=True)
 	is_admin: bool = False
+	description: Optional[str] = Field(default=None, nullable=True)
+	ocupation: Optional[str] = Field(default=None, nullable=True, max_length=25)
+	pic: Optional[str] = "" 
+	
 
+class UserPublic(SQLModel):
+	uid: str 
+	nick: str
+	interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
+	pic: Optional[str]
+	
 
 class UserCreate(SQLModel): 
-	email: str
+	email: str = Field(regex=r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$")
 	fullname: str
 	nick: str
-	interests: List[str] = Field(default=None, sa_column=Column(JSON))
-	zone: str
+	interests: Optional[List[str]] = []
+	zone: Optional[str] = None
+	birthdate: date
+	description: Optional[str] = None
+	ocupation: Optional[str] = None
+	pic: Optional[str] = None
 
 
 class UserRead(SQLModel): 
@@ -32,17 +46,18 @@ class UserRead(SQLModel):
 
 
 class UserUpdate(SQLModel): 
-	nick: str
-	interests: List[str] = Field(default=None, sa_column=Column(JSON))
+	nick: Optional[str]
+	zone: Optional[str]
+	interests: Optional[List[str]]
+	description: Optional[str]
+	ocupation: Optional[str]
+	pic: Optional[str]
 
 
-
-class Follow(SQLModel, table=True):
+class Follow(SQLModel, table=True):	
 	__tablename__ = "follows"
-
-	# {uid} follows {followed_uid}
-	fid: Optional[int] = Field(default=None, primary_key=True)
-	uid: str
-	followed_uid: str
-
-
+	__table_args__ = (PrimaryKeyConstraint('uid', 'followed'),)
+		
+	uid: str = Field(sa_column=Column(String, ForeignKey('users.uid', ondelete='CASCADE')))
+	followed: str = Field(sa_column=Column(String, ForeignKey('users.uid', ondelete='CASCADE')))
+	
