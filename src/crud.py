@@ -58,7 +58,7 @@ def read_recommended(db: Session, uid: str):
 
 
 def read_follow(db: Session, uid: str, followed: str):
-	query = Select(Follow)
+	query = select(Follow)
 	query = query.where(Follow.uid==uid)
 	query = query.where(Follow.followed==followed)
 	return db.exec(query).first()
