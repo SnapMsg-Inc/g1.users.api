@@ -15,7 +15,6 @@ class User(SQLModel, table=True):
 	interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON), nullable=True)
 	zone: Optional[str] = Field(default=None, nullable=True)
 	is_admin: bool = False
-	description: Optional[str] = Field(default=None, nullable=True)
 	ocupation: Optional[str] = Field(default=None, nullable=True, max_length=25)
 	pic: Optional[str] = "" 
 	
@@ -34,7 +33,6 @@ class UserCreate(SQLModel):
 	interests: Optional[List[str]] = []
 	zone: Optional[str] = None
 	birthdate: date
-	description: Optional[str] = None
 	ocupation: Optional[str] = None
 	pic: Optional[str] = None
 
@@ -49,7 +47,6 @@ class UserUpdate(SQLModel):
 	nick: Optional[str]
 	zone: Optional[str]
 	interests: Optional[List[str]]
-	description: Optional[str]
 	ocupation: Optional[str]
 	pic: Optional[str]
 
