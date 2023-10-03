@@ -50,7 +50,11 @@ async def get_users(*,
 
 @app.get("/users/{uid}", response_model=User)
 def get_user(*, db: Session = Depends(get_db), uid: str):
-	return crud.read_user(db, uid)
+	user = crud.read_user(db, uid)
+
+	if not user:
+		raise HTTPException(status_code=404, detail="user not found")
+	return user
 
 
 @app.patch("/users/{uid}")

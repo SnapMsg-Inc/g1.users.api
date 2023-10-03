@@ -4,6 +4,7 @@ from datetime import datetime, date, timedelta
 from pydantic import validator, BaseModel
 
 
+
 class User(SQLModel, table=True): 
 	__tablename__ = "users"	
 	
@@ -13,10 +14,15 @@ class User(SQLModel, table=True):
 	nick: str
 	birthdate: date
 	interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON), nullable=True)
-	zone: Optional[str] = Field(default=None, nullable=True)
+	zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
+	followers: int = 0
+	follows: int = 0
 	is_admin: bool = False
 	ocupation: Optional[str] = Field(default=None, nullable=True, max_length=25)
 	pic: Optional[str] = "" 
+	
+	class Config:
+		arbitrary_types_allowed=True
 	
 
 class UserPublic(SQLModel):
@@ -31,7 +37,7 @@ class UserCreate(SQLModel):
 	fullname: str
 	nick: str
 	interests: Optional[List[str]] = []
-	zone: Optional[str] = None
+	zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
 	birthdate: date
 	ocupation: Optional[str] = None
 	pic: Optional[str] = None
@@ -45,7 +51,7 @@ class UserRead(SQLModel):
 
 class UserUpdate(SQLModel): 
 	nick: Optional[str]
-	zone: Optional[str]
+	zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
 	interests: Optional[List[str]]
 	ocupation: Optional[str]
 	pic: Optional[str]

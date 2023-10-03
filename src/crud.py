@@ -117,7 +117,13 @@ def follow_user(db: Session, uid: str, otheruid: str):
 	# create the follow row
 	db_follow = Follow(uid=uid, followed=otheruid)
 	db.add(db_follow)
+	setattr(db_user, "follows", db_user.follows + 1)
+	setattr(db_other_user, "followers", db_other_user.followers + 1)
+	db.add(db_user)
+	db.add(db_other_user)
 	db.commit()
+	db.refresh(db_user)
+	db.refresh(db_other_user)
 
 
 def unfollow_user(db: Session, uid: str, otheruid: str):
@@ -138,4 +144,11 @@ def unfollow_user(db: Session, uid: str, otheruid: str):
 		raise HTTPException(status_code=404, detail="follow not found")
 
 	db.delete(db_follow)
+	setattr(db_user, "follows", db_user.follows - 1)
+	setattr(db_other_user, "followers", db_other_user.followers - 1)
+	db.add(db_user)
+	db.add(db_other_user)
 	db.commit()
+	db.refresh(db_user)
+	db.refresh(db_other_user)
+
