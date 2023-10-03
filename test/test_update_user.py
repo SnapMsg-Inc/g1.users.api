@@ -15,10 +15,9 @@ def testUser1():
         email="john@example.com",
         birthdate="1990-01-01",
         nick="eljuancho",
-        zone="Bogotá",
+        zone={"latitude" : 0, "longitude" : 1},
         interests=["music", "movies"],
         ocupation="student",
-        description="I like music and movies"
     )
 
 
@@ -37,7 +36,7 @@ def test_update_user_nick(db, testUser1):
                             email = testUser1.email,
                             interests = testUser1.interests,
                             ocupation = testUser1.ocupation,
-                            description = testUser1.description)
+                            )
     
     update_user(db, uid, userUpdate)
 

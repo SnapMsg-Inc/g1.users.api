@@ -15,7 +15,7 @@ def test_create_user_happy_path(db):
         email="john@example.com", 
         birthdate="1990-01-01",
         nick="eljuancho", 
-        zone="Bogotá",  
+        zone={"latitude":10.00, "longitude":0.00},  
         interests=["music", "movies"],
 		pic="someurl"	
     )

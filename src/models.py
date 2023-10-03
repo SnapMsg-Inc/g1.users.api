@@ -28,6 +28,8 @@ class User(SQLModel, table=True):
 class UserPublic(SQLModel):
 	uid: str 
 	nick: str
+	followers: int = 0
+	follows: int = 0
 	interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
 	pic: Optional[str]
 	
