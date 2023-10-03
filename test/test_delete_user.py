@@ -12,7 +12,7 @@ def testUser1():
         email="john@example.com",
         birthdate="1990-01-01",
         nick="eljuancho",
-        zone="Bogotá",
+        zone={"latitude":1.00000, "longitude":0.54},
         interests=["music", "movies"],
     )
 

@@ -15,7 +15,7 @@ def testUser1():
         email="john@example.com",
         birthdate="1990-01-01",
         nick="eljuancho",
-        zone="Bogotá",
+        zone={"latitude":1.00000, "longitude":0.54},
         interests=["music", "movies"],
     )
 @pytest.fixture
@@ -25,7 +25,7 @@ def testUser2():
         email="charles@example.com",
         birthdate="1992-01-01",
         nick="charles",
-        zone="UK",
+        zone={"latitude":1.00000, "longitude":0.54},
         interests=["music", "movies"],
     )
 

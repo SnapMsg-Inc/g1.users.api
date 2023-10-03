@@ -44,7 +44,7 @@ def test_create_user_already_exists(db):
                            email="john@example.com",
                            birthdate="1990-01-01",
                            nick="eljuancho",
-                           zone="Bogotá",
+                           zone={"latitude":1.00000, "longitude":0.54},
                            interests=["music", "movies"])
 
     # Act
@@ -62,7 +62,7 @@ def test_create_user_missing_fields():
         # Arrange
         user_data = UserCreate(fullname="John",
                                email="john@gmail.com",
-                               zone="Bogotá",
+                               zone={"latitude":1.00000, "longitude":0.54},
                                interests=["music", "movies"],
                                nick="eljuancho")
         
