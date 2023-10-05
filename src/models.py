@@ -1,7 +1,7 @@
 from sqlmodel import Field, SQLModel, Column, String, JSON, ARRAY, ForeignKey, PrimaryKeyConstraint
 from typing import Set, List, Optional, Pattern, Annotated
 from datetime import datetime, date, timedelta
-from pydantic import validator, BaseModel
+from pydantic import BaseModel, constr
 
 
 
@@ -12,6 +12,7 @@ class User(SQLModel, table=True):
 	email: str
 	fullname: str = Field(default=None, max_length=50)
 	nick: str
+	alias: str
 	birthdate: date
 	interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON), nullable=True)
 	zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
@@ -27,6 +28,7 @@ class User(SQLModel, table=True):
 
 class UserPublic(SQLModel):
 	uid: str 
+	alias: str
 	nick: str
 	followers: int = 0
 	follows: int = 0
@@ -37,6 +39,7 @@ class UserPublic(SQLModel):
 class UserCreate(SQLModel): 
 	email: str = Field(regex=r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$")
 	fullname: str
+	alias: str
 	nick: str
 	interests: Optional[List[str]] = []
 	zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
@@ -49,9 +52,11 @@ class UserRead(SQLModel):
 	uid: Optional[str] = None
 	email: Optional[str] = None
 	nick: Optional[str] = None
+	alias: Optional[str] = None
 
 
 class UserUpdate(SQLModel): 
+	alias: Optional[str]
 	nick: Optional[str]
 	zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
 	interests: Optional[List[str]]
