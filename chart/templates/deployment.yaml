@@ -18,7 +18,7 @@ spec:
             terminationGracePeriodSeconds: 0
             containers:
               - name: users-api
-                image: {{ .Values.users-api.image }}
+				image: {{ index .Values "users-api" "image" }}
                 ports:
                   - name: http
                     containerPort: 8080
