@@ -1,0 +1,6 @@
+apiVersion: v2
+name: users-api
+description: A users api for the SnapMsg app project
+type: application
+version: 0.1.0
+
