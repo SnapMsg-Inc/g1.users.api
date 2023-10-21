@@ -1,26 +1,18 @@
 name: g1.users.api
 
 build:
-  users-ms:
-    context: .
-    dockerfile: Dockerfile
-
+  users-api:
+    context: . 
     
 deploy:
-  compose: docker-compose.yml
+  - helm upgrade --install users-api chart
+    --set users-api.image=${OKTETO_BUILD_USERS_API_IMAGE}
 
 dev:
-  users-ms:
+  users-api:
+    command: uvicorn src.main:app --host 0.0.0.0 --port 3000
     forward:
       - 3000:3000
-      - 5432:users-db:5432
-      - 8126:datadog-agent:8126
     sync:
       - .:/usr/snapmsg-users
-
-  datadog-agent:
-    forward:
-      - 8126:8126
-    sync:
-      - ./ddconf.yml:/etc/datadog-agent/conf.d/datadog.yml
 
