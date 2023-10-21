@@ -1,4 +1,4 @@
 api:
   replicaCount: 1
-  image: okteto.dev/api:okteto
+  image: okteto.dev/users-ms-api:okteto
 
