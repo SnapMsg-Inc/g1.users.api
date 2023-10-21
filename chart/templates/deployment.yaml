@@ -6,7 +6,7 @@ metadata:
         {{- include "chart.labels" . | nindent 4 }}
         app.kubernetes.io/component: users-api
 spec:
-    replicas: {{ .Values.api.replicaCount }}
+	replicas: {{ index .Values "users-api" "replicaCount" }}
     selector:
         matchLabels: # service will match (forward) to pod under name: users-api
             {{- include "chart.selectorLabels" . | nindent 4 }}
