@@ -1,38 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: users-api
-    labels:
-        {{- include "chart.labels" . | nindent 4 }}
-        app.kubernetes.io/component: users-api
+  name: users-api
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+    app.kubernetes.io/component: users-api
 spec:
-	replicas: {{ index .Values "users-api" "replicaCount" }}
-    selector:
-        matchLabels: # service will match (forward) to pod under name: users-api
-            {{- include "chart.selectorLabels" . | nindent 4 }}
-    template:
-        metadata:
-            labels: # same as .spec.selector.matchLabels
-                {{- include "chart.selectorLabels" . | nindent 4 }}
-        spec:
-            terminationGracePeriodSeconds: 0
-            containers:
-              - name: users-api
-				image: {{ index .Values "users-api" "image" }}
-                ports:
-                  - name: http
-                    containerPort: 8080
-                    protocol: TCP
-                
-                livenessProbe:
-                    periodSeconds: 1
-                    httpGet:
-                        path: /
-                        port: 8080
-                readinessProbe:
-                    periodSeconds: 1
-                    httpGet:
-                        path: /
-                        port: 8080
-
+  replicas: {{ index .Values "users-api" "replicaCount" }}
+  selector:
+    matchLabels: # service will match (forward) to pod under name: users-api
+      {{- include "chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels: # same as .spec.selector.matchLabels
+        {{- include "chart.selectorLabels" . | nindent 8 }}
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: users-api
+        image: {{ index .Values "users-api" "image" }}
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        livenessProbe:
+          periodSeconds: 1
+          httpGet:
+            path: /
+            port: 8080
+        readinessProbe:
+          periodSeconds: 1
+          httpGet:
+            path: /
+            port: 8080
 
