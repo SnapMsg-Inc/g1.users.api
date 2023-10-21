@@ -8,10 +8,10 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-    name: http
+  - protocol: TCP
     port: 8080
     targetPort: 3000
-    protocol: TCP
+    name: http
   selector: # labels to match pods
     {{- include "chart.selectorLabels" . | nindent 4 }} 
 
