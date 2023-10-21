@@ -1,14 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: users-api
+  name: api
   labels:
     {{- include "chart.labels" . | nindent 4 }}
-    app.kubernetes.io/component: users-api
+    app.kubernetes.io/component: api
 spec:
-  replicas: {{ index .Values "users-api" "replicaCount" }}
+  replicas: {{ .Values.api.replicaCount }}
   selector:
-    matchLabels: # service will match (forward) to pod under name: users-api
+    matchLabels: # service will match (forward) to pod under tagged `api`
       {{- include "chart.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -17,8 +17,8 @@ spec:
     spec:
       terminationGracePeriodSeconds: 0
       containers:
-      - name: users-api
-        image: {{ index .Values "users-api" "image" }}
+      - name: api
+        image: {{ .Values.api.image }}
         ports:
         - name: http
           containerPort: 8080
