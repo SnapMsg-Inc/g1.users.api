@@ -1,4 +1,4 @@
 users-api:
-	replicaCount: 1
-	image: okteto.dev/users-ms:okteto #
+  replicaCount: 1
+  image: okteto.dev/users-ms:okteto
 
