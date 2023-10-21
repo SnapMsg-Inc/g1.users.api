@@ -6,7 +6,7 @@ build:
     
 deploy:
   - helm upgrade --install users-api chart
-    --set users-api.image=${OKTETO_BUILD_USERS_API_IMAGE}
+    --set "users-api".image=${OKTETO_BUILD_USERS_API_IMAGE}
 
 dev:
   users-api:
