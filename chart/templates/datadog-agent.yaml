@@ -35,6 +35,34 @@ spec:
         ports:
         - protocol: TCP
           containerPort: 8126
+        volumeMounts:
+          name: datadog-apm
+          mountPath: "/opt/datadog/apm"
+          name: docker-sock
+          mountPath: "/var/run/docker.sock"
+          name: docker-containers
+          mountPath: "/var/lib/docker/containers"
+          name: proc
+          mountPath: "/host/proc/"
+          name: cgroup
+          mountPath: "/host/sys/fs/cgroup"
+
+      volumes:
+      - name: datadog-apm
+        hostPath: "/opt/datadog/apm"
+        type: DirectoryOrCreate
+      - name: docker-sock
+        hostPath: "/var/run/docker.sock"
+        type: Socket 
+      - name: docker-containers
+        hostPath: "/var/lib/docker/containers"
+        type: Directory 
+      - name: proc
+        hostPath: "/proc/"
+        type: Directory
+      - name: cgroup
+        hostPath: "/sys/fs/cgroup/"
+        type: Directory
 
 ---
 
