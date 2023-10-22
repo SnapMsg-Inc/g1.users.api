@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: frontend
+        app.kubernetes.io/name: datadog-agent 
     spec:
       containers:
       - name: datadog-agent
