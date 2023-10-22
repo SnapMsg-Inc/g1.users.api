@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datadog-agent
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+    app.kubernetes.io/component: datadog-agent
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: datadog-agent
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: frontend
+    spec:
+      containers:
+      - name: datadog-agent
+        image: docker.io/datadog/agent:latest
+        env:
+        - name: DD_API_KEY
+          value: "555c35b37ec810fddfb30ae20fd46a16"
+        - name: DD_APP_KEY
+          value: "df8740cdddefaee14fce3923094b45dd32efd79c"
+        - name: DD_SITE
+          value: "us5.datadoghq.com"
+        - name: DD_APM_ENABLED
+          value: "true"
+        - name: DD_APM_NON_LOCAL_TRAFFIC
+          value: "true"
+        - name: DD_REMOTE_CONFIGURATION_ENABLED
+          value: "true"
+        ports:
+        - protocol: TCP
+          containerPort: 8126
+        volumeMounts:
+        - name: /
+          mountPath: /
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: datadog-agent
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+    app.kubernetes.io/component: datadog-agent
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 8126
+    targetPort: 8126
+  selector:
+    app.kubernetes.io/name: datadog-agent
