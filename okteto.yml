@@ -7,6 +7,7 @@ build:
 deploy:
   - helm upgrade --install users-ms chart
     --set api.image=${OKTETO_BUILD_API_IMAGE}
+  - helm install my-datadog-operator datadog/datadog-operator
 
 dev:
   api:
