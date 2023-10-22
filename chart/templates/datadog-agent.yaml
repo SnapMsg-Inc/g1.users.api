@@ -35,9 +35,6 @@ spec:
         ports:
         - protocol: TCP
           containerPort: 8126
-        volumeMounts:
-        - name: /
-          mountPath: /
 
 ---
 
