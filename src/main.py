@@ -5,10 +5,10 @@ from .models import User, UserPublic, UserCreate, UserRead, UserUpdate
 from .database import engine, init_tables
 from . import crud
 
-import datadog 
-from ddtrace.runtime import RuntimeMetrics
+#import datadog 
+#from ddtrace.runtime import RuntimeMetrics
 
-RuntimeMetrics.enable()
+#RuntimeMetrics.enable()
 
 app = FastAPI()
 
