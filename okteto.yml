@@ -18,7 +18,7 @@ dev:
       - .:/usr/snapmsg-users
 
   datadog-agent:
-	forward:
+    forward:
       - 8126:8126
 #    sync:
 #      - ./ddconf.yml:/etc/datadog-agent/conf.d/datadog.yml
