@@ -36,42 +36,42 @@ spec:
         - protocol: TCP
           containerPort: 8126
         volumeMounts:
-        - name: datadog-apm
-          mountPath: "/opt/datadog/apm"
-        - name: docker-sock
-          mountPath: "/var/run/docker.sock"
-          readOnly: true
-        - name: docker-containers
-          mountPath: "/var/lib/docker/containers"
-          readOnly: true
-        - name: proc
-          mountPath: "/host/proc/"
-          readOnly: true
-        - name: cgroup
-          mountPath: "/host/sys/fs/cgroup"
-          readOnly: true
+        - name: host 
+          mountPath: "/"
+#        - name: docker-sock
+#          mountPath: "/var/run/docker.sock"
+#          readOnly: true
+#        - name: docker-containers
+#          mountPath: "/var/lib/docker/containers"
+#          readOnly: true
+#        - name: proc
+#          mountPath: "/host/proc/"
+#          readOnly: true
+#        - name: cgroup
+#          mountPath: "/host/sys/fs/cgroup"
+#          readOnly: true
 
       volumes:
-      - name: datadog-apm
+      - name: host
         hostPath:
-          path: "/opt/datadog/apm"
-          type: DirectoryOrCreate
-      - name: docker-sock
-        hostPath:
-          path: "/var/run/docker.sock"
-          type: Socket 
-      - name: docker-containers
-        hostPath:
-          path: "/var/lib/docker/containers"
-          type: Directory 
-      - name: proc
-        hostPath:
-          path: "/proc/"
-          type: Directory
-      - name: cgroup
-        hostPath:
-          path: "/sys/fs/cgroup/"
-          type: Directory
+          path: "/"
+#          type: DirectoryOrCreate
+#      - name: docker-sock
+#        hostPath:
+#          path: "/var/run/docker.sock"
+#          type: Socket 
+#      - name: docker-containers
+#        hostPath:
+#          path: "/var/lib/docker/containers"
+#          type: Directory 
+#      - name: proc
+#        hostPath:
+#          path: "/proc/"
+#          type: Directory
+#      - name: cgroup
+#        hostPath:
+#          path: "/sys/fs/cgroup/"
+#          type: Directory
 
 ---
 
