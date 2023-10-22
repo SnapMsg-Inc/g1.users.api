@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: api
+  labels:
+    {{- include "chart.labels" . | nindent 4 }}
+    app.kubernetes.io/component: api
+spec:
+  type: ClusterIP
+  ports:
+  - protocol: TCP
+    port: 8080
+    targetPort: 3000
+    name: http
+  selector: # labels to match pods
+    {{- include "chart.selectorLabels" . | nindent 4 }} 
+
