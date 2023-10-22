@@ -35,9 +35,6 @@ spec:
         ports:
         - protocol: TCP
           containerPort: 8126
-        volumeMounts:
-        - name: host 
-          mountPath: "/"
 #        - name: docker-sock
 #          mountPath: "/var/run/docker.sock"
 #          readOnly: true
@@ -51,10 +48,7 @@ spec:
 #          mountPath: "/host/sys/fs/cgroup"
 #          readOnly: true
 
-      volumes:
-      - name: host
-        hostPath:
-          path: "/"
+#      volumes:
 #          type: DirectoryOrCreate
 #      - name: docker-sock
 #        hostPath:
