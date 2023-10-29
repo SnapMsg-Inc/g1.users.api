@@ -28,8 +28,7 @@ class User(SQLModel, table=True):
     follows: int = 0
     is_admin: bool = False
     ocupation: Optional[str] = Field(default=None, nullable=True, max_length=25)
-    pic: Optional[HttpUrl] = "" 
-
+    pic: str = ""
     
     class Config:
         arbitrary_types_allowed=True
@@ -42,7 +41,7 @@ class UserPublic(SQLModel):
     followers: int = 0
     follows: int = 0
     interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
-    pic: Optional[HttpUrl]
+    pic: str
     
 
 class UserCreate(SQLModel): 
@@ -54,7 +53,7 @@ class UserCreate(SQLModel):
     zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
     birthdate: date
     ocupation: Optional[str] = None
-    pic: Optional[HttpUrl] = None
+    pic: str
 
     
 class UserRead(SQLModel): 
@@ -70,7 +69,7 @@ class UserUpdate(SQLModel):
     zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
     interests: Optional[List[str]]
     ocupation: Optional[str]
-    pic: Optional[HttpUrl]
+    pic: str
 
 
 class Follow(SQLModel, table=True): 
