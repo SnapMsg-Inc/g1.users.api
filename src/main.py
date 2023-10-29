@@ -43,7 +43,6 @@ async def get_users(*,
                     user: UserRead = Depends(),
                     limit: int = Query(default=100, le=100),
                     page: int = 0):
-    print(f"LIMIT {limit}")
     users = crud.read_users(db, user, limit, page)
     return users
 
