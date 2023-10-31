@@ -9,7 +9,7 @@ deploy:
     --set api.image=${OKTETO_BUILD_API_IMAGE}
 dev:
   api:
-    command: ddtrace-run uvicorn src.main:app --host 0.0.0.0 --port 3000
+#    command: ddtrace-run uvicorn src.main:app --host 0.0.0.0 --port 3000
     forward:
       - 3000:3000
       - 5432:users-db:5432

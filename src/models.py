@@ -5,6 +5,7 @@ from sqlmodel import (
     String, 
     JSON, 
     ForeignKey, 
+    UniqueConstraint,
     PrimaryKeyConstraint
 )
 from typing import Set, List, Optional, Pattern, Annotated
@@ -15,10 +16,14 @@ from pydantic import BaseModel, EmailStr, HttpUrl, validator
 
 class User(SQLModel, table=True): 
     __tablename__ = "users" 
+    __table_args__ = (
+        UniqueConstraint("email"),
+        UniqueConstraint("nick"),
+    )
     
     uid: str = Field(default=None, primary_key=True)
-    email: EmailStr = Field(sa_column=Column("email", String, unique=True))
-    nick: str = Field(sa_column=Column("nick", String, unique=True), max_length=30)
+    email: EmailStr
+    nick: str = Field(max_length=30) 
     fullname: str = Field(default=None, max_length=50)
     alias: str
     birthdate: date
