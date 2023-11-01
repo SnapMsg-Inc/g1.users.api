@@ -27,9 +27,9 @@ def create_user(db: Session, uid: str, user: UserCreate):
 
 
 def read_user(db: Session, uid: str):
-    query = select(User).where(User.uid == uid)
-    return db.exec(query).first()
-
+    #query = select(User).where(User.uid == uid)
+    #return db.exec(query).first()
+    return db.get(User, uid)
 
 def read_users(db: Session, user: UserRead, limit: int, page: int):
     user_query = user.dict(exclude_none=True)

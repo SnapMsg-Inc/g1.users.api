@@ -1,74 +1,91 @@
-from pydantic import ValidationError
 import pytest
-from fastapi import HTTPException
+
+from fastapi import TestClient 
+from pydantic import ValidationError
 from src.models import User, UserCreate
-from test.test_main import db_fixture as db
+
+from .fixtures import db, client
 from src.crud import create_user
 
 
-def test_create_user_happy_path(db):
 
-    # Arrange
-    uid = "unique_id_1"
-    new_user = UserCreate(
-		fullname="John", 
-        email="john@example.com", 
-        birthdate="1990-01-01",
-        nick="eljuancho", 
-        zone={"latitude":10.00, "longitude":0.00},  
-        interests=["music", "movies"],
-		pic="someurl"	
-    )
-    # Act
-    create_user(db, uid, new_user)
-
-    db_user = db.get(User, uid)
+sample_user = UserCreate(
+    fullname="John", 
+    email="john@example.com", 
+    birthdate="1990-01-01",
+    nick="eljuancho", 
+    alias="Juan Bostero", 
+    zone={"latitude":10.00, "longitude":0.00},  
+    interests=["music", "movies"],
+    pic="someurl"	
+)
 
 
-    # Assert
-    assert db_user.uid == uid
-    assert db_user.fullname == new_user.fullname
-    assert db_user.email == new_user.email
-    assert db_user.birthdate == new_user.birthdate
-    assert db_user.nick == new_user.nick
-    assert db_user.zone == new_user.zone
-    assert db_user.interests == new_user.interests
-    
-
-
-def test_create_user_already_exists(db):
-    
+def test_create_user_happy_path(client: TestClient):
     # Arrange
     uid = "unique_id"
-    user_data = UserCreate(fullname="John",
-                           email="john@example.com",
-                           birthdate="1990-01-01",
-                           nick="eljuancho",
-                           zone={"latitude":1.00000, "longitude":0.54},
-                           interests=["music", "movies"])
+    test_user = sample_user.copy()
 
     # Act
-    create_user(db, uid, user_data)
+    res = client.post("/users", json=test_user.model_dump())
+    db_user = UserCreate.from_orm(db.get(User, uid))
 
-    with pytest.raises(HTTPException) as excinfo:
-        create_user(db, uid, user_data)
-    
     # Assert
-    assert str(excinfo.value.detail) == "user already exists"
-
-def test_create_user_missing_fields():
+    assert res.status_code == 200
+    assert db_user == test_user
     
-    with pytest.raises(ValidationError) as excinfo:
-        # Arrange
-        user_data = UserCreate(fullname="John",
-                               email="john@gmail.com",
-                               zone={"latitude":1.00000, "longitude":0.54},
-                               interests=["music", "movies"],
-                               nick="eljuancho")
-        
-    # Assert 
-    assert "birthdate" in str(excinfo.value)
-    assert "field required" in str(excinfo.value)
 
+def test_create_uid_already_exists(client: TestClient):
+    # Arrange
+    uid = "unique_id"
+    test_user = sample_user.copy()
+    client.post("/users", json=test_user.model_dump())
+
+    # change nick and email
+    test_user.nick = "pedro"
+    test_user.email= "pedro@pedro.com"
+ 
+    # Act
+    res = client.post("/users", json=test_user.model_dump())
+
+    # Assert
+    assert res.status_code == 409
+    assert res.detail == "user already exists"
+
+
+def test_create_email_already_exists(client: TestClient):
+    # Arrange
+    uid = "unique_id_0"
+    test_user = sample_user.copy()
+    client.post("/users", json=test_user.model_dump())
+
+    # change uid and nick
+    uid = "unique_id_1"
+    test_user.nick = "juan"
+ 
+    # Act
+    res = client.post("/users", json=test_user.model_dump())
+
+    # Assert
+    assert res.status_code == 409
+    assert res.detail == "user already exists"
+
+
+def test_create_nick_already_exists(client: TestClient):
+    # Arrange
+    uid = "unique_id_0"
+    test_user = sample_user.copy()
+    client.post("/users", json=test_user.model_dump())
+
+    # change uid and nick
+    uid = "unique_id_1"
+    test_user.email = "juancho@example.com"
+ 
+    # Act
+    res = client.post("/users", json=test_user.model_dump())
+
+    # Assert
+    assert res.status_code == 409
+    assert res.detail == "user already exists"
 
     

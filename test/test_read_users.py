@@ -1,92 +1,139 @@
-from pydantic import ValidationError
 import pytest
-from fastapi import HTTPException
-from src.models import User, UserPublic, UserCreate, UserRead
-from test.test_main import db_fixture as db
-from test.test_main import client_fixture as client
-from src.crud import read_users, create_user
 
-FIRST_USER = 0
+from fastapi import TestClient 
+from pydantic import ValidationError
+from src.models import User, UserCreate
 
-@pytest.fixture
-def testUser1():
-    return User(
-        uid="1",
-        fullname="John",
-        email="john@example.com",
-        birthdate="1990-01-01",
-        nick="eljuancho",
-        zone={"latitude":1.00000, "longitude":0.54},
-        interests=["music", "movies"],
-    )
+from .fixtures import db, client
+from src.crud import create_user
 
-@pytest.fixture
-def testUser2():
-    return User(
-        uid="2",
-        fullname="Charles",
-        email="charles@example.com",
-        birthdate="1992-01-01",
-        nick="charles",
-        zone={"latitude":1.00000, "longitude":0.54},
-        interests=["music", "movies"],
-    )
 
-@pytest.fixture
-def testUser3():
-    return User(
-        uid="3",
-        fullname="Tom",
-        email="tom@example.com",
-        birthdate="1991-01-01",
-        nick="Tom",
-        zone={"latitude":1.00000, "longitude":0.54},
-        interests=["music", "movies"],
-    )
+sample_user = User(
+    uid="1",
+    fullname="John",
+    email="john@example.com",
+    birthdate="1990-01-01",
+    nick="eljuancho",
+    alias="Juan Bostero",
+    zone={"latitude":1.00000, "longitude":0.54},
+    interests=["music", "movies"],
+)
 
-def test_read_users_happy_path(db, client, testUser1):
+
+'''
+    TEST GET /users/{uid}
+'''
+
+def test_read_user_uid_in_path(db, client):
     # Arrange 
-    db.add(testUser1)
+    test_user = sample_user.copy()
+    db.add(test_user)
     db.commit()
 
-    user_read = UserRead.from_orm(testUser1)
-    testUser1_public = UserPublic.from_orm(testUser1)
+    user_public = UserPublic.from_orm(test_user)
     
     # Act
-	# query must be harcoded according to TestClient docs
-    users = client.get("/users?uid=1").json()
+    res = client.get(f"/users/{test_user.uid}").json()
     
     # Assert
-    assert users[FIRST_USER] == testUser1_public
+    assert res.status_code == 200
+    assert users == user_public
 
-def test_read_users_no_user_found(db):
 
-    userRead = UserRead(uid="unique_id_1")
-    users = read_users(db, userRead, 100, 0)
+def test_read_user_uid_in_path_twice(db, client):
+    # Arrange 
+    test_user = sample_user.copy()
+    db.add(test_user)
+    db.commit()
 
-    assert len(users) == 0
-    assert users == []
-
-def test_read_users_by_email(db, testUser1, testUser2, testUser3):
+    user_public = UserPublic.from_orm(test_user)
     
-    # Arrange
-    uid1 = "unique_id_1"
-    uid2 = "unique_id_2"
-    uid3 = "unique_id_3"
+    res = client.get(f"/users/{test_user.uid}").json()
+    
+    assert res.status_code == 200
+    assert users == user_public
 
+    res = client.get(f"/users/{test_user.uid}").json()
+    
+    assert res.status_code == 200
+    assert users == user_public
+
+
+
+def test_read_user_uid_in_path_not_found(db, client):
+    # Act
+    res = client.get(f"/users/some_uid").json()
+    
+    # Assert
+    assert res.status_code == 404 
+    assert res.detail == "user not found" 
+
+
+'''
+    TEST GET /users
+'''
+
+def test_read_users_filter_by_uid(db, client):
+    # Arrange 
+    test_user = sample_user.copy()
+    db.add(test_user)
+    db.commit()
+
+    user_public = UserPublic.from_orm(test_user)
     
     # Act
-    create_user(db, uid1, testUser1)
-    create_user(db, uid2, testUser2)
-    create_user(db, uid3, testUser3)
-
-    userRead = UserRead(email=testUser1.email)
-    users = read_users(db, userRead, 100, 0)
-
+    res = client.get(f"/users?uid={test_user.uid}").json()
+    
     # Assert
-    assert len(users) == 1
-    assert users[FIRST_USER].fullname == testUser1.fullname
-    assert users[FIRST_USER].email == testUser1.email
-    assert users[FIRST_USER].birthdate == testUser1.birthdate
-    assert users[FIRST_USER].nick == testUser1.nick
-    assert users[FIRST_USER].zone == testUser1.zone
+    assert res.status_code == 200
+    assert res.body[0] == user_public
+
+
+def test_read_users_filter_by_email(db, client):
+    # Arrange 
+    test_user = sample_user.copy()
+    db.add(test_user)
+    db.commit()
+
+    user_public = UserPublic.from_orm(test_user)
+    
+    # Act
+    res = client.get(f"/users?email={test_user.email}").json()
+    
+    # Assert
+    assert res.status_code == 200
+    assert res.body[0] == user_public
+
+
+def test_read_users_filter_by_nick(db, client):
+    # Arrange 
+    test_user = sample_user.copy()
+    db.add(test_user)
+    db.commit()
+
+    user_public = UserPublic.from_orm(test_user)
+    
+    # Act
+    res = client.get(f"/users?nick={test_user.nick}").json()
+    
+    # Assert
+    assert res.status_code == 200
+    assert res.body[0] == user_public
+
+
+def test_read_users_filter_by_alias(db, client):
+    # Arrange 
+    test_user = sample_user.copy()
+    db.add(test_user)
+    db.commit()
+
+    user_public = UserPublic.from_orm(test_user)
+    
+    # Act
+    res = client.get(f"/users?alias={test_user.alias}").json()
+    
+    # Assert
+    assert res.status_code == 200
+    assert res.body[0] == user_public
+
+
