@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Header, Query, Depends, Request
 from fastapi.responses import JSONResponse 
 from sqlmodel import Session
+from contextlib import asynccontextmanager
 from typing import List, Optional, Annotated
 from .models import User, UserPublic, UserCreate, UserRead, UserUpdate
 from .database import engine, init_tables
@@ -17,6 +18,7 @@ app = FastAPI()
 @app.exception_handler(Exception)
 async def error_handler(req: Request, exc):
     detail = "internal server error"
+    detail = str(exc)
     code = 400
     if isinstance(exc, crud.CRUDException):
         detail = str(exc)
@@ -27,10 +29,11 @@ def get_db():
     with Session(engine) as db:
         yield db
 
-@app.on_event("startup")
+@asynccontextmanager
 def on_startup():
     # connect to db and create tables
     init_tables()
+    yield
 
 
 @app.get("/")
@@ -57,7 +60,7 @@ def get_users(*,
     return users
 
 
-@app.get("/users/{uid}", response_model=Optional[User])
+@app.get("/users/{uid}", response_model=User)
 def get_user(*, db: Session = Depends(get_db), uid: str):
     user = crud.read_user(db, uid)
     if not user:

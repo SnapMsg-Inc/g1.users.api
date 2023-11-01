@@ -35,6 +35,11 @@ class User(SQLModel, table=True):
     ocupation: Optional[str] = Field(default=None, nullable=True, max_length=25)
     pic: str = ""
     
+    def model_dump(self):
+        d = self.dict().copy()
+        d["birthdate"] = str(d["birthdate"])
+        return d    
+
     class Config:
         arbitrary_types_allowed=True
     
@@ -59,6 +64,14 @@ class UserCreate(SQLModel):
     birthdate: date
     ocupation: Optional[str] = None
     pic: str
+    
+    def model_dump(self):
+        d = self.dict().copy()
+        d["birthdate"] = str(d["birthdate"])
+        return d        
+    
+    class Config:
+        orm_mode=True
 
     
 class UserRead(SQLModel): 

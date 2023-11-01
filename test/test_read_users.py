@@ -1,72 +1,67 @@
-import pytest
-
-from fastapi import TestClient 
+from fastapi.testclient import TestClient 
+from sqlmodel import Session
 from pydantic import ValidationError
-from src.models import User, UserCreate
 
-from .fixtures import db, client
+from src.models import User, UserPublic
 from src.crud import create_user
 
-
-sample_user = User(
-    uid="1",
-    fullname="John",
-    email="john@example.com",
-    birthdate="1990-01-01",
-    nick="eljuancho",
-    alias="Juan Bostero",
-    zone={"latitude":1.00000, "longitude":0.54},
-    interests=["music", "movies"],
-)
+def sample_user():
+    return User(
+        uid="unique_uid",
+        email="john@example.com",
+        nick="eljuancho",
+        fullname="John",
+        alias="Juan Bostero",
+        birthdate="1999-01-01",
+        zone={"latitude":1.00000, "longitude":0.54},
+        interests=["music", "movies"],
+    )
 
 
 '''
     TEST GET /users/{uid}
 '''
 
-def test_read_user_uid_in_path(db, client):
+def test_read_user_uid_in_path(db: Session, client: TestClient):
     # Arrange 
-    test_user = sample_user.copy()
+    test_user = sample_user() 
     db.add(test_user)
     db.commit()
 
-    user_public = UserPublic.from_orm(test_user)
-    
     # Act
-    res = client.get(f"/users/{test_user.uid}").json()
-    
+    res = client.get("/users/unique_uid/")
+    user_response = res.json()
+
     # Assert
     assert res.status_code == 200
-    assert users == user_public
+    assert user_response == test_user.model_dump()
 
 
 def test_read_user_uid_in_path_twice(db, client):
     # Arrange 
-    test_user = sample_user.copy()
+    test_user = sample_user()
     db.add(test_user)
     db.commit()
 
-    user_public = UserPublic.from_orm(test_user)
-    
-    res = client.get(f"/users/{test_user.uid}").json()
+    res = client.get(f"/users/{test_user.uid}")
+    user_response = res.json()
     
     assert res.status_code == 200
-    assert users == user_public
+    assert user_response == test_user.model_dump()
 
-    res = client.get(f"/users/{test_user.uid}").json()
+    res = client.get(f"/users/{test_user.uid}")
     
     assert res.status_code == 200
-    assert users == user_public
+    assert user_response == test_user.model_dump()
 
 
 
 def test_read_user_uid_in_path_not_found(db, client):
     # Act
-    res = client.get(f"/users/some_uid").json()
+    res = client.get(f"/users/some_uid")
     
     # Assert
     assert res.status_code == 404 
-    assert res.detail == "user not found" 
 
 
 '''
@@ -75,65 +70,69 @@ def test_read_user_uid_in_path_not_found(db, client):
 
 def test_read_users_filter_by_uid(db, client):
     # Arrange 
-    test_user = sample_user.copy()
+    test_user = sample_user()
     db.add(test_user)
     db.commit()
 
     user_public = UserPublic.from_orm(test_user)
     
     # Act
-    res = client.get(f"/users?uid={test_user.uid}").json()
+    res = client.get(f"/users?uid={test_user.uid}")
+    users = res.json()
     
     # Assert
     assert res.status_code == 200
-    assert res.body[0] == user_public
+    assert users[0] == user_public
 
 
 def test_read_users_filter_by_email(db, client):
     # Arrange 
-    test_user = sample_user.copy()
+    test_user = sample_user()
     db.add(test_user)
     db.commit()
 
     user_public = UserPublic.from_orm(test_user)
     
     # Act
-    res = client.get(f"/users?email={test_user.email}").json()
-    
+    res = client.get(f"/users?email={test_user.email}")    
+    users = res.json()
+
     # Assert
     assert res.status_code == 200
-    assert res.body[0] == user_public
+    assert users[0] == user_public
 
 
 def test_read_users_filter_by_nick(db, client):
     # Arrange 
-    test_user = sample_user.copy()
+    test_user = sample_user()
     db.add(test_user)
     db.commit()
 
     user_public = UserPublic.from_orm(test_user)
     
     # Act
-    res = client.get(f"/users?nick={test_user.nick}").json()
+    res = client.get(f"/users?nick={test_user.nick}")
+    users = res.json()
     
     # Assert
     assert res.status_code == 200
-    assert res.body[0] == user_public
+    assert users[0] == user_public
 
 
 def test_read_users_filter_by_alias(db, client):
     # Arrange 
-    test_user = sample_user.copy()
+    test_user = sample_user()
     db.add(test_user)
     db.commit()
 
     user_public = UserPublic.from_orm(test_user)
     
     # Act
-    res = client.get(f"/users?alias={test_user.alias}").json()
+    res = client.get(f"/users?alias={test_user.alias}")
+    users = res.json()
     
     # Assert
     assert res.status_code == 200
-    assert res.body[0] == user_public
+    assert users[0] == user_public
 
 

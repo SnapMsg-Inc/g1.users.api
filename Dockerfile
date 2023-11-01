@@ -14,7 +14,7 @@ COPY . .
 # test stage
 FROM base as test
 RUN pip install pytest httpx
-CMD pytest
+CMD pytest 
 
 
 # production stage
