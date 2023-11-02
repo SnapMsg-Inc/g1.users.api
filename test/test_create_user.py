@@ -1,32 +1,14 @@
-import pytest
-import json
-
 from fastapi.testclient import TestClient 
 from sqlmodel import Session
-from pydantic import ValidationError
+
+from .conftest import sample_create_user 
 from src.models import User, UserCreate
-
-#from .fixtures import db, client
-from src.crud import create_user
-
-
-
-sample_user = UserCreate(
-    fullname="John", 
-    email="john@example.com", 
-    birthdate="1990-01-01",
-    nick="eljuancho", 
-    alias="Juan Bostero", 
-    zone={"latitude":10.00, "longitude":0.00},  
-    interests=["music", "movies"],
-    pic="someurl"	
-)
 
 
 def test_create_user_happy_path(db: Session, client: TestClient):
     # Arrange
     uid = "unique_id"
-    test_user = sample_user.copy()
+    test_user = sample_create_user()
 
     # Act
     res = client.post(f"/users/{uid}", json=test_user.model_dump())
@@ -41,10 +23,10 @@ def test_create_user_happy_path(db: Session, client: TestClient):
     assert db_user == test_user
     
 
-def test_create_uid_already_exists(client: TestClient):
+def test_create_user_uid_already_exists(client: TestClient):
     # Arrange
     uid = "unique_id"
-    test_user = sample_user.copy()
+    test_user = sample_create_user()
     res = client.post(f"/users/{uid}", json=test_user.model_dump())
     assert res.status_code == 201
     # change nick and email
@@ -58,10 +40,10 @@ def test_create_uid_already_exists(client: TestClient):
     assert res.status_code == 409
 
 
-def test_create_email_already_exists(client: TestClient):
+def test_create_user_email_already_exists(client: TestClient):
     # Arrange
     uid = "unique_id_0"
-    test_user = sample_user.copy()
+    test_user = sample_create_user()
     client.post(f"/users/{uid}", json=test_user.model_dump())
 
     # change uid and nick
@@ -75,10 +57,10 @@ def test_create_email_already_exists(client: TestClient):
     assert res.status_code == 409
 
 
-def test_create_nick_already_exists(client: TestClient):
+def test_create_user_nick_already_exists(client: TestClient):
     # Arrange
     uid = "unique_id_0"
-    test_user = sample_user.copy()
+    test_user = sample_create_user()
     client.post(f"/users/{uid}", json=test_user.model_dump())
 
     # change uid and nick

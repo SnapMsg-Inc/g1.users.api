@@ -82,12 +82,12 @@ class UserRead(SQLModel):
 
 
 class UserUpdate(SQLModel): 
-    alias: Optional[str]
-    nick: Optional[str]
+    nick: Optional[str] = None
+    alias: Optional[str] = None
     zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
-    interests: Optional[List[str]]
-    ocupation: Optional[str]
-    pic: str
+    interests: Optional[List[str]] = None
+    ocupation: Optional[str] = None
+    pic: str = None
 
 
 class Follow(SQLModel, table=True): 

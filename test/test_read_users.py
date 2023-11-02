@@ -1,22 +1,9 @@
 from fastapi.testclient import TestClient 
 from sqlmodel import Session
-from pydantic import ValidationError
 
+from .conftest import sample_user
 from src.models import User, UserPublic
 from src.crud import create_user
-
-def sample_user():
-    return User(
-        uid="unique_uid",
-        email="john@example.com",
-        nick="eljuancho",
-        fullname="John",
-        alias="Juan Bostero",
-        birthdate="1999-01-01",
-        zone={"latitude":1.00000, "longitude":0.54},
-        interests=["music", "movies"],
-    )
-
 
 '''
     TEST GET /users/{uid}
