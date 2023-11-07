@@ -87,7 +87,7 @@ class UserUpdate(SQLModel):
     zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
     interests: Optional[List[str]] = None
     ocupation: Optional[str] = None
-    pic: str = None
+    pic: Optional[str] = None
 
 
 class Follow(SQLModel, table=True): 
