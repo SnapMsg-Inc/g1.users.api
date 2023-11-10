@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from sqlmodel import Session
 from contextlib import asynccontextmanager
 from typing import List, Optional, Annotated
+from pydantic import ValidationError
 from .models import User, UserPublic, UserCreate, UserRead, UserUpdate
 from .database import engine, init_tables
 from . import crud
@@ -18,8 +19,10 @@ app = FastAPI()
 @app.exception_handler(Exception)
 async def error_handler(req: Request, exc):
     detail = "internal server error"
-    detail = str(exc)
     code = 400
+    if isinstance(exc, ValidationError):
+        detail = str(exc)
+        code = 422 
     if isinstance(exc, crud.CRUDException):
         detail = str(exc)
         code = exc.code

@@ -16,8 +16,9 @@ class CRUDException(Exception):
 
 
 def create_user(db: Session, uid: str, user: UserCreate):
+    db_user = User.from_orm(user, {"uid" : uid})
+
     try:
-        db_user = User.from_orm(user, {"uid" : uid})
         db.add(db_user)
         db.commit()
         db.refresh(db_user)
