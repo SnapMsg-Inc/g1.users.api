@@ -88,7 +88,7 @@ class UserUpdate(SQLModel):
     interests: Optional[List[str]] = None
     ocupation: Optional[str] = None
     pic: Optional[str] = None
-    is_admin: Optional[str] = None
+    is_admin: Optional[bool] = None
 
 
 class Follow(SQLModel, table=True): 
