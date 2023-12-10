@@ -52,6 +52,7 @@ class UserPublic(SQLModel):
     follows: int = 0
     interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
     pic: str
+    is_admin: bool
     
 
 class UserCreate(SQLModel): 
