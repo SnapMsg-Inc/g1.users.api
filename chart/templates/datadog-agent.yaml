@@ -28,6 +28,8 @@ spec:
           value: "us5.datadoghq.com"
         - name: DD_APM_ENABLED
           value: "true"
+        - name: DD_DOGSTATSD_NON_LOCAL_TRAFFIC
+          value: "true"
         - name: DD_APM_NON_LOCAL_TRAFFIC
           value: "true"
         - name: DD_REMOTE_CONFIGURATION_ENABLED
