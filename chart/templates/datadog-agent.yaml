@@ -85,10 +85,12 @@ metadata:
 spec:
   type: ClusterIP
   ports:
-  - protocol: TCP
+  - name: ddtrace
+    protocol: TCP
     port: 8126
     targetPort: 8126
-  - protocol: UDP
+  - name: dogstatsd
+    protocol: UDP
     port: 8125
     targetPort: 8125
   selector:
