@@ -59,9 +59,9 @@ def create_user(*,
                 uid: str,
                 user: UserCreate):
     crud.create_user(db, uid, user)
-    geo_tags = [f'logitude:{user.zone["longitude"]}', f'latitude:{user.zone["latitude"]}'] 
+    geo_tags = [f'latitude:{user.zone["latitude"]}', f'longitude:{user.zone["longitude"]}'] 
     print(geo_tags)
-    #statsd.increment(metric="users.geo", tags=)
+    statsd.gauge(metric="users.geo", 1, tags=geo_tags + ["env:prod"])
     return {"message": "user created"}
 
 
