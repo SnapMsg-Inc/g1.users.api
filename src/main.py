@@ -8,12 +8,21 @@ from .models import User, UserPublic, UserCreate, UserRead, UserUpdate
 from .database import engine, init_tables
 from . import crud
 
-import datadog 
+from datadog import initialize, DogStatsd
 from ddtrace.runtime import RuntimeMetrics
+from ddtrace import tracer
 
 RuntimeMetrics.enable()
 
 app = FastAPI()
+
+
+options = {
+    'statsd_host': 'datadog-agent',
+    'statsd_port': 8125,
+}
+initialize(**options)
+statsd = DogStatsd()
 
 
 @app.exception_handler(Exception)
@@ -50,6 +59,9 @@ def create_user(*,
                 uid: str,
                 user: UserCreate):
     crud.create_user(db, uid, user)
+    geo_tags = [f'logitude:{user.zone["longitude"]}', f'latitude:{user.zone["latitude"]}'] 
+    print(geo_tags)
+    #statsd.increment(metric="users.geo", tags=)
     return {"message": "user created"}
 
 
