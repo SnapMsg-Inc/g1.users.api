@@ -90,7 +90,7 @@ def delete_user(*, db: Session = Depends(get_db), uid: str):
 
 @app.get("/users/{uid}/recommended", response_model=List[UserPublic])
 def get_recommended(*, db: Session = Depends(get_db), uid: str):
-    return {"message": "recommended users"}
+    return crud.read_recommended(db, uid)
 
 
 @app.get("/users/{uid}/followers", response_model=List[UserPublic])

@@ -1,4 +1,5 @@
 from sqlmodel import Session, select, column
+from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from .models import User, UserCreate, UserRead, UserUpdate, Follow
 
@@ -65,6 +66,10 @@ def delete_user(db: Session, uid: str):
 
 
 def read_recommended(db: Session, uid: str):
+    db_user = db.get(User, uid)
+    db.engine.execute("SELECT * FROM users")
+    print(select(selectable.c.uid))
+    #db_recommended = db.exec(query)
     return []
 
 
