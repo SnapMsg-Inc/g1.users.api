@@ -1,5 +1,5 @@
 init_config:
 
 instances:
-    - host: users-ms 
-      port: 3000 
+    - host: users-api
+      port: 3001

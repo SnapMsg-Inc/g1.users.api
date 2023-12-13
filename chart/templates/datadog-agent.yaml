@@ -41,37 +41,6 @@ spec:
           containerPort: 8126
         - protocol: UDP
           containerPort: 8125
-#        - name: docker-sock
-#          mountPath: "/var/run/docker.sock"
-#          readOnly: true
-#        - name: docker-containers
-#          mountPath: "/var/lib/docker/containers"
-#          readOnly: true
-#        - name: proc
-#          mountPath: "/host/proc/"
-#          readOnly: true
-#        - name: cgroup
-#          mountPath: "/host/sys/fs/cgroup"
-#          readOnly: true
-
-#      volumes:
-#          type: DirectoryOrCreate
-#      - name: docker-sock
-#        hostPath:
-#          path: "/var/run/docker.sock"
-#          type: Socket 
-#      - name: docker-containers
-#        hostPath:
-#          path: "/var/lib/docker/containers"
-#          type: Directory 
-#      - name: proc
-#        hostPath:
-#          path: "/proc/"
-#          type: Directory
-#      - name: cgroup
-#        hostPath:
-#          path: "/sys/fs/cgroup/"
-#          type: Directory
 
 ---
 

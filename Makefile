@@ -1,6 +1,6 @@
 ## users API 1.0.0
 ## 
-PORT=3000
+PORT=3001
 
 .PHONY: clean test run-local
 
@@ -14,7 +14,7 @@ build: clean ## Build the docker image
 	docker build -t users-ms --target prod .
 
 run: build   ## Run the docker image (and build)
-	docker run --rm --name users-ms -p ${PORT}:3000 users-ms:latest
+	docker run --rm --name users-ms -p ${PORT}:3001 users-ms:latest
 
 test:        ## Run dockerized tests
 	docker build -t users-ms-test --target test .
