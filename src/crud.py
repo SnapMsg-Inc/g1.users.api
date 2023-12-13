@@ -66,12 +66,13 @@ def delete_user(db: Session, uid: str):
 
 
 def read_recommended(db: Session, uid: str):
+    return []
     db_user = db.get(User, uid)
     if not db_user:
         raise CRUDException(code=404, message="user not found")
 
     query = select(User)
-    query = query.where(User.interests.contains(db_user.interests)))
+    query = query.where(User.interests.contains(db_user.interests))
     query = query.order_by(func.random()).limit(10)
     print(f"[INFO] QUERY: {query}")
     print(f"[INFO] RESULT: {list(db.exec(query))}")
