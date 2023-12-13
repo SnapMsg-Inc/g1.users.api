@@ -1,4 +1,4 @@
-from sqlmodel import Session, select, column
+from sqlmodel import Session, select, column, text, or_
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from .models import User, UserCreate, UserRead, UserUpdate, Follow
@@ -67,9 +67,14 @@ def delete_user(db: Session, uid: str):
 
 def read_recommended(db: Session, uid: str):
     db_user = db.get(User, uid)
-    db.engine.execute("SELECT * FROM users")
-    print(select(selectable.c.uid))
-    #db_recommended = db.exec(query)
+    if not db_user:
+        raise CRUDException(code=404, message="user not found")
+
+    query = select(User)
+    query = query.where(User.interests.contains(db_user.interests)))
+    query = query.order_by(func.random()).limit(10)
+    print(f"[INFO] QUERY: {query}")
+    print(f"[INFO] RESULT: {list(db.exec(query))}")
     return []
 
 
