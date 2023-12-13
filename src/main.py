@@ -16,15 +16,6 @@ RuntimeMetrics.enable()
 
 app = FastAPI()
 
-
-options = {
-    'statsd_host': 'datadog-agent',
-    'statsd_port': 8125,
-}
-initialize(**options)
-statsd = DogStatsd()
-
-
 @app.exception_handler(Exception)
 async def error_handler(req: Request, exc):
     detail = "internal server error"
@@ -59,11 +50,6 @@ def create_user(*,
                 uid: str,
                 user: UserCreate):
     crud.create_user(db, uid, user)
-
-    if "latitude" in user.zone and "longitude" in user.zone:
-        geo_tags = [f'latitude:{user.zone["latitude"]}', f'longitude:{user.zone["longitude"]}'] 
-        print(f'[INFO] {geo_tags}')
-        statsd.increment(metric="users.geo", tags=geo_tags.append("env:prod"))
     return {"message": "user created"}
 
 
@@ -93,38 +79,12 @@ def update_user(*,
     if not user:
         return {"message" : "nothing to update"}
 
-    # check if user had valid geo info and decrement it
-    db_user = crud.read_user(db, uid)
-    old_zone = {}
-
-    if db_user:
-        old_zone = db_user.zone
-
-    if "latitude" in old_zone and "longitude" in old_zone:
-        geo_tags = [f'latitude:{old_zone["latitude"]}', f'longitude:{old_zone["longitude"]}'] 
-        statsd.decrement(metric="users.geo", tags=geo_tags.append("env:prod"))
-    
     crud.update_user(db, uid, user)
-
-    # if success, increment geo data metric
-    if "latitude" in user.zone and "longitude" in user.zone:
-        geo_tags = [f'latitude:{user.zone["latitude"]}', f'longitude:{user.zone["longitude"]}'] 
-        statsd.increment(metric="users.geo", tags=geo_tags.append("env:prod"))
-    
     return {"message": "user updated"}
 
 @app.delete("/users/{uid}")
 def delete_user(*, db: Session = Depends(get_db), uid: str):
-    user = crud.read_user(db, uid)
-    zone = {}
-    if user:
-        zone = user.zone
-
     crud.delete_user(db, uid)
-
-    if "latitude" in zone and "longitude" in zone:
-        geo_tags = [f'latitude:{zone["latitude"]}', f'longitude:{zone["longitude"]}'] 
-        statsd.decrement(metric="users.geo", tags=geo_tags.append("env:prod"))
     return {"message": "user deleted"}
 
 
