@@ -32,6 +32,7 @@ class User(SQLModel, table=True):
     followers: int = 0
     follows: int = 0
     is_admin: bool = False
+    is_blocked: bool = False
     ocupation: Optional[str] = Field(default=None, nullable=True, max_length=25)
     pic: str = ""
     
@@ -53,6 +54,7 @@ class UserPublic(SQLModel):
     interests: Optional[List[str]]= Field(default=None, sa_column=Column(JSON))
     pic: str
     is_admin: bool
+    is_blocked: bool
     
 
 class UserCreate(SQLModel): 
@@ -90,6 +92,7 @@ class UserUpdate(SQLModel):
     ocupation: Optional[str] = None
     pic: Optional[str] = None
     is_admin: Optional[bool] = None
+    is_blocked: Optional[bool] = None
 
 
 class Follow(SQLModel, table=True): 
