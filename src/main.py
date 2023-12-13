@@ -59,10 +59,11 @@ def create_user(*,
                 uid: str,
                 user: UserCreate):
     crud.create_user(db, uid, user)
-    geo_tags = [f'latitude:{user.zone["latitude"]}', f'longitude:{user.zone["longitude"]}'] 
-    print(geo_tags)
-    statsd.gauge(metric="users.geo", value=1, tags=geo_tags.append("env:prod"))
 
+    if "latitude" in user.zone and "longitude" in user.zone:
+        geo_tags = [f'latitude:{user.zone["latitude"]}', f'longitude:{user.zone["longitude"]}'] 
+        print(f'[INFO] {geo_tags}')
+        statsd.increment(metric="users.geo", tags=geo_tags.append("env:prod"))
     return {"message": "user created"}
 
 
@@ -91,13 +92,39 @@ def update_user(*,
                 user: Optional[UserUpdate] = None):
     if not user:
         return {"message" : "nothing to update"}
+
+    # check if user had valid geo info and decrement it
+    db_user = crud.read_user(db, uid)
+    old_zone = {}
+
+    if db_user:
+        old_zone = db_user.zone
+
+    if "latitude" in old_zone and "longitude" in old_zone:
+        geo_tags = [f'latitude:{old_zone["latitude"]}', f'longitude:{old_zone["longitude"]}'] 
+        statsd.decrement(metric="users.geo", tags=geo_tags.append("env:prod"))
+    
     crud.update_user(db, uid, user)
+
+    # if success, increment geo data metric
+    if "latitude" in user.zone and "longitude" in user.zone:
+        geo_tags = [f'latitude:{user.zone["latitude"]}', f'longitude:{user.zone["longitude"]}'] 
+        statsd.increment(metric="users.geo", tags=geo_tags.append("env:prod"))
+    
     return {"message": "user updated"}
-#docker container exec <container> "DROP TABLE users;"
 
 @app.delete("/users/{uid}")
 def delete_user(*, db: Session = Depends(get_db), uid: str):
+    user = crud.read_user(db, uid)
+    zone = {}
+    if user:
+        zone = user.zone
+
     crud.delete_user(db, uid)
+
+    if "latitude" in zone and "longitude" in zone:
+        geo_tags = [f'latitude:{zone["latitude"]}', f'longitude:{zone["longitude"]}'] 
+        statsd.decrement(metric="users.geo", tags=geo_tags.append("env:prod"))
     return {"message": "user deleted"}
 
 

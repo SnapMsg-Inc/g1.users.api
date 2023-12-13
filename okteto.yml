@@ -9,16 +9,18 @@ deploy:
     --set api.image=${OKTETO_BUILD_API_IMAGE}
 dev:
   api:
-#    command: ddtrace-run uvicorn src.main:app --host 0.0.0.0 --port 3000
+    command: ddtrace-run uvicorn src.main:app --host 0.0.0.0 --port 3000 --reload
     forward:
       - 3000:3000
       - 5432:users-db:5432
       - 8126:datadog-agent:8126
+      - 8125:datadog-agent:8125
     sync:
       - .:/usr/snapmsg-users
 
   datadog-agent:
     forward:
       - 8126:8126
+      - 8125:8125
 #    sync:
 #      - ./ddconf.yml:/etc/datadog-agent/conf.d/datadog.yml
