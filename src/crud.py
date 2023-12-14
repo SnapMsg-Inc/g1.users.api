@@ -20,8 +20,9 @@ class CRUDException(Exception):
 
 def create_user(db: Session, uid: str, user: UserCreate):
     #validated = validate_model(User, user, {"uid" : uid})
-    setattr(user, "uid", uid)
-    db_user = User.model_validate(user)
+    user_json = user.model_dump()
+    user_json["uid"] = uid
+    db_user = User.model_validate(user_json)
     print(db_user)
     try:
         db.add(db_user)
