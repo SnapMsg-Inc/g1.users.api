@@ -4,6 +4,7 @@ from sqlmodel import (
     Column, 
     String, 
     JSON, 
+    ARRAY, 
     ForeignKey, 
     UniqueConstraint,
     PrimaryKeyConstraint
@@ -27,7 +28,8 @@ class User(SQLModel, table=True):
     fullname: str = Field(default=None, max_length=50)
     alias: str
     birthdate: date
-    interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
+    #interests: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
+    interests: Optional[List[str]] = Field(default=[], sa_column=Column(ARRAY(String)))
     zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
     followers: int = 0
     follows: int = 0
