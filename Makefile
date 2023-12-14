@@ -16,11 +16,11 @@ build: clean ## Build the docker image
 run: build   ## Run the docker image (and build)
 	docker run --rm --name users-ms -p ${PORT}:3001 users-ms:latest
 
-test:        ## Run dockerized tests
-	docker build -t users-ms-test --target test .
-	- docker run --tty --name users-ms-test users-ms-test:latest pytest -vv
-	- @docker container rm -f users-ms-test > /dev/null 2>&1
-	- @docker image rm -f users-ms-test > /dev/null 2>&1
+test:        ## Run dockerized tests 
+	docker compose -f docker-compose.test.yaml up --no-log-prefix --abort-on-container-exit --no-attach postgres 
+	- docker compose -f docker-compose.test.yaml down
+	- @docker volume rm -f users-ms_postgres_data > /dev/null 2>&1
+	- @docker image rm -f users-ms-users_api:latest > /dev/null 2>&1
 
 format:      ## Format (yapf must be installed)
 	yapf -i --style google src/*.py test/*.py

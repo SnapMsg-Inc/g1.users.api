@@ -87,7 +87,7 @@ def test_update_user_pic(db: Session, client: TestClient):
 def test_update_user_all(db: Session, client: TestClient):
     test_user = sample_user() 
     db.add(test_user)
-    db.commit()
+    #db.commit()
 
     user_update = {
         "nick" : "different_nick",

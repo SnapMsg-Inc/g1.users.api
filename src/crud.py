@@ -1,5 +1,6 @@
 from sqlmodel import Session, select, column, text, or_
-from sqlalchemy import func
+from sqlalchemy.dialects.postgresql import JSON
+from sqlalchemy import func, cast, String
 from sqlalchemy.exc import IntegrityError
 from .models import User, UserCreate, UserRead, UserUpdate, Follow
 
@@ -17,7 +18,7 @@ class CRUDException(Exception):
 
 
 def create_user(db: Session, uid: str, user: UserCreate):
-    db_user = User.from_orm(user, {"uid" : uid})
+    db_user = User.model_validate(user, {"uid" : uid})
 
     try:
         db.add(db_user)
@@ -34,7 +35,7 @@ def read_user(db: Session, uid: str):
     return db.get(User, uid)
 
 def read_users(db: Session, user: UserRead, limit: int, page: int):
-    user_query = user.dict(exclude_none=True)
+    user_query = user.model_dump(exclude_none=True)
     query = select(User).offset(page * limit).limit(limit)
     # match the query params case insensitive
     for k, v in user_query.items():
@@ -47,7 +48,7 @@ def update_user(db: Session, uid: str, user: UserUpdate):
     
     if not db_user:
         raise CRUDException(code=404, message="user not found")
-    user_data = user.dict(exclude_none=True)
+    user_data = user.model_dump(exclude_none=True)
     
     for k, v in user_data.items():
         setattr(db_user, k, v)
@@ -70,15 +71,19 @@ def read_recommended(db: Session, uid: str):
     if not db_user:
         raise CRUDException(code=404, message="user not found")
 
+    
     query = select(User)
     query = db.query(User) 
     query = query.filter(text(":search_array && interests")).params(search_array=db_user.interests)
-    query = query.where(User.uid != uid)
+
+    #query = query.filter(text("interests_bk @> :search_array")).params(search_array=db_user.interests_bk)  # Use the @> operator for JSON containment
+    #query = query.filter(cast(User.interests, JSON).op('@>')(db_user.interests))
+    
     result = query.order_by(func.random()).limit(10).all()
 
     #print(f"[INFO] QUERY: {query}")
-    #print(f"[INFO] RESULT: {result}")
-    return result
+    print(f"[INFO] RESULT: {matching_users}")
+    return result 
 
 
 def read_follow(db: Session, uid: str, followed: str):

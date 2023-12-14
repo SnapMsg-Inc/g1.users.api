@@ -4,19 +4,28 @@ from fastapi.testclient import TestClient
 from sqlmodel import Session, SQLModel, create_engine
 from sqlmodel.pool import StaticPool 
 from src.main import app, get_db
-from src.models import User, UserCreate
+from src.models import User, Follow, UserCreate
 
 
 @pytest.fixture(name="db")
 def db():
     # use in-memory database
     print("Setting up db")
-    connect_args = {"check_same_thread": False}
-    engine = create_engine("sqlite://", connect_args=connect_args, poolclass=StaticPool)
+    #connect_args = {"check_same_thread": False}
+    TEST_DB_URL = "postgresql://test:1234@postgres/testdb"
+    engine = create_engine(TEST_DB_URL)#, connect_args=connect_args)
+
     SQLModel.metadata.create_all(engine)
-    with Session(engine) as db: 
+
+    with Session(engine, autocommit=False, autoflush=False) as db: 
         yield db
-        db.rollback()
+        db.execute(User.__table__.delete())
+        db.execute(Follow.__table__.delete())
+        db.commit()
+        #db.rollback()
+
+
+
 
 @pytest.fixture(name="client")
 def client(db: Session):
