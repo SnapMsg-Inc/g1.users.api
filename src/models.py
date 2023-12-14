@@ -23,12 +23,12 @@ class User(SQLModel, table=True):
     )
     
     uid: str = Field(default=None, primary_key=True)
-    email: EmailStr
+    email: str
     nick: str = Field(max_length=30) 
     fullname: str = Field(default=None, max_length=50)
     alias: str
     birthdate: date
-    interests_bk: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
+#    interests_bk: Optional[List[str]] = Field(default=[], sa_column=Column(JSON))
     interests: Optional[List[str]] = Field(default=[], sa_column=Column(ARRAY(String)))
     zone: Optional[dict[str, float]] = Field(default={}, sa_column=Column(JSON))
     followers: int = 0

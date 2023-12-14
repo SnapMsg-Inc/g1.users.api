@@ -7,31 +7,32 @@ from src.main import app, get_db
 from src.models import User, Follow, UserCreate
 
 
-@pytest.fixture(name="db")
-def db():
-    # use in-memory database
-    print("Setting up db")
-    #connect_args = {"check_same_thread": False}
+def get_engine():
     TEST_DB_URL = "postgresql://test:1234@postgres/testdb"
     engine = create_engine(TEST_DB_URL)#, connect_args=connect_args)
-
     SQLModel.metadata.create_all(engine)
+    return engine
+ 
 
-    with Session(engine, autocommit=False, autoflush=False) as db: 
-        yield db
-        db.execute(User.__table__.delete())
-        db.execute(Follow.__table__.delete())
-        db.commit()
-        #db.rollback()
+@pytest.fixture(name="db_no_rollback")
+def db_no_rollback():
+    with Session(get_engine(), autoflush=True) as db_no_rollback:
+        yield db_no_rollback
+    
 
-
+@pytest.fixture(name="db")
+def db(db_no_rollback: Session):
+    yield db_no_rollback
+    db_no_rollback.execute(User.__table__.delete())
+    db_no_rollback.execute(Follow.__table__.delete())
+    db_no_rollback.commit()
+    
 
 
 @pytest.fixture(name="client")
-def client(db: Session):
-    # override `get_db` dependecy
+def client(db_no_rollback: Session):
     def get_db_override():
-        return db
+        return db_no_rollback
 
     app.dependency_overrides[get_db] = get_db_override
     client = TestClient(app, raise_server_exceptions=False)

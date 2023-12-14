@@ -2,6 +2,7 @@ from sqlmodel import Session, select, column, text, or_
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy import func, cast, String
 from sqlalchemy.exc import IntegrityError
+
 from .models import User, UserCreate, UserRead, UserUpdate, Follow
 
 
@@ -18,8 +19,10 @@ class CRUDException(Exception):
 
 
 def create_user(db: Session, uid: str, user: UserCreate):
-    db_user = User.model_validate(user, {"uid" : uid})
-
+    #validated = validate_model(User, user, {"uid" : uid})
+    setattr(user, "uid", uid)
+    db_user = User.model_validate(user)
+    print(db_user)
     try:
         db.add(db_user)
         db.commit()

@@ -14,6 +14,7 @@ def test_create_user_happy_path(db: Session, client: TestClient):
     res = client.post(f"/users/{uid}", json=test_user.model_dump())
 
     # Assert
+    db.refresh()
     db_user = db.get(User, uid)
     assert db_user is not None
 
