@@ -9,7 +9,7 @@ from src.crud import create_user
     TEST GET /users/{uid}
 '''
 
-def test_read_user_uid_in_path(db: Session, client: TestClient):
+def test_read_user_uid_in_path(db: Session, client: TestClient, cleanup_db):
     # Arrange 
     test_user = sample_user() 
     db.add(test_user)
@@ -24,7 +24,7 @@ def test_read_user_uid_in_path(db: Session, client: TestClient):
     assert user_response == test_user.model_dump()
 
 
-def test_read_user_uid_in_path_twice(db, client):
+def test_read_user_uid_in_path_twice(db: Session, client: TestClient, cleanup_db):
     # Arrange 
     test_user = sample_user()
     db.add(test_user)
@@ -43,7 +43,7 @@ def test_read_user_uid_in_path_twice(db, client):
 
 
 
-def test_read_user_uid_in_path_not_found(db, client):
+def test_read_user_uid_in_path_not_found(db, client, cleanup_db):
     # Act
     res = client.get(f"/users/some_uid")
     
@@ -55,13 +55,13 @@ def test_read_user_uid_in_path_not_found(db, client):
     TEST GET /users
 '''
 
-def test_read_users_filter_by_uid(db, client):
+def test_read_users_filter_by_uid(db, client, cleanup_db):
     # Arrange 
     test_user = sample_user()
     db.add(test_user)
     db.commit()
 
-    user_public = UserPublic.from_orm(test_user)
+    user_public = UserPublic.model_validate(test_user)
     
     # Act
     res = client.get(f"/users?uid={test_user.uid}")
@@ -69,16 +69,16 @@ def test_read_users_filter_by_uid(db, client):
     
     # Assert
     assert res.status_code == 200
-    assert users[0] == user_public
+    assert users[0] == user_public.model_dump()
 
 
-def test_read_users_filter_by_email(db, client):
+def test_read_users_filter_by_email(db, client, cleanup_db):
     # Arrange 
     test_user = sample_user()
     db.add(test_user)
     db.commit()
 
-    user_public = UserPublic.from_orm(test_user)
+    user_public = UserPublic.model_validate(test_user)
     
     # Act
     res = client.get(f"/users?email={test_user.email}")    
@@ -86,16 +86,16 @@ def test_read_users_filter_by_email(db, client):
 
     # Assert
     assert res.status_code == 200
-    assert users[0] == user_public
+    assert users[0] == user_public.model_dump()
 
 
-def test_read_users_filter_by_nick(db, client):
+def test_read_users_filter_by_nick(db, client, cleanup_db):
     # Arrange 
     test_user = sample_user()
     db.add(test_user)
     db.commit()
 
-    user_public = UserPublic.from_orm(test_user)
+    user_public = UserPublic.model_validate(test_user)
     
     # Act
     res = client.get(f"/users?nick={test_user.nick}")
@@ -103,16 +103,16 @@ def test_read_users_filter_by_nick(db, client):
     
     # Assert
     assert res.status_code == 200
-    assert users[0] == user_public
+    assert users[0] == user_public.model_dump()
 
 
-def test_read_users_filter_by_alias(db, client):
+def test_read_users_filter_by_alias(db, client, cleanup_db):
     # Arrange 
     test_user = sample_user()
     db.add(test_user)
     db.commit()
 
-    user_public = UserPublic.from_orm(test_user)
+    user_public = UserPublic.model_validate(test_user)
     
     # Act
     res = client.get(f"/users?alias={test_user.alias}")
@@ -120,6 +120,6 @@ def test_read_users_filter_by_alias(db, client):
     
     # Assert
     assert res.status_code == 200
-    assert users[0] == user_public
+    assert users[0] == user_public.model_dump()
 
 

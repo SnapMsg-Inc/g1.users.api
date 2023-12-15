@@ -38,12 +38,12 @@ class User(SQLModel, table=True):
     ocupation: Optional[str] = Field(default=None, nullable=True, max_length=25)
     pic: str = ""
     
-    #def model_dump(self, **kwargs):
-    #    d = super().model_dump(**kwargs)
-    #    #d["birthdate"] = str(d["birthdate"])
-    #    return d    
+    def model_dump(self, **kwargs):
+        d = super().model_dump(**kwargs)
+        d["birthdate"] = str(d["birthdate"])
+        return d    
 
-    class Config:
+    class ConfigDict:
         arbitrary_types_allowed=True
     
 
@@ -75,8 +75,8 @@ class UserCreate(SQLModel):
         d["birthdate"] = str(d["birthdate"])
         return d        
     
-    class Config:
-        orm_mode=True
+    class ConfigDict:
+        from_attributes=True
 
     
 class UserRead(SQLModel): 

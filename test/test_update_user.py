@@ -5,7 +5,7 @@ from .conftest import sample_user
 from src.models import User, UserCreate, UserRead, UserUpdate
 
 
-def test_update_user_nick(db: Session, client: TestClient):
+def test_update_user_nick(db: Session, client: TestClient, cleanup_db):
      # Arrange 
     test_user = sample_user() 
     db.add(test_user)
@@ -19,7 +19,7 @@ def test_update_user_nick(db: Session, client: TestClient):
     assert db.get(User, test_user.uid) == test_user
 
 
-def test_update_user_alias(db: Session, client: TestClient):
+def test_update_user_alias(db: Session, client: TestClient, cleanup_db):
     test_user = sample_user() 
     db.add(test_user)
     db.commit()
@@ -32,7 +32,7 @@ def test_update_user_alias(db: Session, client: TestClient):
     assert db.get(User, test_user.uid) == test_user
  
 
-def test_update_user_zone(db: Session, client: TestClient):
+def test_update_user_zone(db: Session, client: TestClient, cleanup_db):
     test_user = sample_user() 
     db.add(test_user)
     db.commit()
@@ -45,7 +45,7 @@ def test_update_user_zone(db: Session, client: TestClient):
     assert db.get(User, test_user.uid) == test_user
   
 
-def test_update_user_interests(db: Session, client: TestClient):
+def test_update_user_interests(db: Session, client: TestClient, cleanup_db):
     test_user = sample_user() 
     db.add(test_user)
     db.commit()
@@ -58,7 +58,7 @@ def test_update_user_interests(db: Session, client: TestClient):
     assert db.get(User, test_user.uid) == test_user
   
 
-def test_update_user_ocupation(db: Session, client: TestClient):
+def test_update_user_ocupation(db: Session, client: TestClient, cleanup_db):
     test_user = sample_user() 
     db.add(test_user)
     db.commit()
@@ -71,7 +71,7 @@ def test_update_user_ocupation(db: Session, client: TestClient):
     assert db.get(User, test_user.uid) == test_user
     
 
-def test_update_user_pic(db: Session, client: TestClient):
+def test_update_user_pic(db: Session, client: TestClient, cleanup_db):
     test_user = sample_user() 
     db.add(test_user)
     db.commit()
@@ -84,7 +84,7 @@ def test_update_user_pic(db: Session, client: TestClient):
     assert db.get(User, test_user.uid) == test_user
 
 
-def test_update_user_all(db: Session, client: TestClient):
+def test_update_user_all(db: Session, client: TestClient, cleanup_db):
     test_user = sample_user() 
     db.add(test_user)
     db.commit()
@@ -104,7 +104,7 @@ def test_update_user_all(db: Session, client: TestClient):
     assert db.get(User, test_user.uid) == test_user
 
 
-def test_update_user_does_not_exist(db: Session, client: TestClient):
+def test_update_user_does_not_exist(db: Session, client: TestClient, cleanup_db):
     test_user = sample_user() 
 
     user_update = {

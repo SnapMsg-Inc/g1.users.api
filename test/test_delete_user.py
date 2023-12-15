@@ -5,7 +5,7 @@ from src.models import User, UserCreate
 from .conftest import sample_user 
 
 
-def test_delete_user(db: Session, client: TestClient):
+def test_delete_user(db: Session, client: TestClient, cleanup_db):
     # Arrange
     test_user = sample_user()
     db.add(test_user)
@@ -19,7 +19,7 @@ def test_delete_user(db: Session, client: TestClient):
     assert db.get(User, test_user.uid) is None
 
     
-def test_delete_user_does_not_exist(db: Session, client: TestClient):
+def test_delete_user_does_not_exist(db: Session, client: TestClient, cleanup_db):
     # Act
     res = client.delete(f"/users/some_uid")    
 
@@ -27,7 +27,7 @@ def test_delete_user_does_not_exist(db: Session, client: TestClient):
     assert res.status_code == 404
 
 
-def test_delete_user_does_not_delete_other_user(db: Session, client: TestClient):
+def test_delete_user_does_not_delete_other_user(db: Session, client: TestClient, cleanup_db):
     # Arrange
     test_user_0 = sample_user()
     db.add(test_user_0)
