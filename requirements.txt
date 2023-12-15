@@ -5,5 +5,5 @@ pydantic[email]
 sqlmodel==0.0.14
 psycopg2>=2.9.7
 datadog==0.47.0
-ddtrace==1.19.0
+ddtrace==2.3.2
 requests==2.31.0
