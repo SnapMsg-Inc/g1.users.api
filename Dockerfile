@@ -8,8 +8,6 @@ RUN pip install --upgrade pip
 
 RUN pip install -r requirements.txt
 
-RUN pip install datadog==0.47.0 ddtrace==1.19.0
-
 COPY . .
 
 
