@@ -5,16 +5,15 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  
   unit_tests:
     runs-on: ubuntu-latest
     services:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: 1234
-          POSTGRES_DB: testdb
+          POSTGRES_USER: "test"
+          POSTGRES_PASSWORD: "1234"
+          POSTGRES_DB: "testdb"
         ports:
           - 5432:5432
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
@@ -29,7 +28,7 @@ jobs:
         pip install -r requirements.txt
         pip install pytest httpx coverage
     - name: Run unit tests
-      run: coverage run -m pytest .
+      run: TEST_DB_URL="postgresql://test:1234@localhost:5432/testdb" coverage run -m pytest .
       
     - name: Generate coverage reports
       run: coverage xml
@@ -42,6 +41,5 @@ jobs:
       with:
         files: coverage.xml
         fail_ci_if_error: true
-
 
 
