@@ -1,3 +1,4 @@
+import os
 import pytest
 
 from fastapi.testclient import TestClient
@@ -10,7 +11,10 @@ from src.models import User, Follow, UserCreate
 
 @pytest.fixture(name="db")
 def db():
-    TEST_DB_URL = "postgresql://test:1234@postgres/testdb"
+    TEST_DB_URL = os.environ.get("TEST_DB_URL")
+
+    if TEST_DB_URL is None:
+        TEST_DB_URL = "postgresql://test:1234@postgres/testdb"
     engine = create_engine(TEST_DB_URL)#, connect_args=connect_args)
     SQLModel.metadata.create_all(engine)
 
