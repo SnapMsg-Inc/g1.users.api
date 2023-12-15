@@ -82,7 +82,7 @@ def read_recommended(db: Session, uid: str):
 
     #query = query.filter(text("interests_bk @> :search_array")).params(search_array=db_user.interests_bk)  # Use the @> operator for JSON containment
     #query = query.filter(cast(User.interests, JSON).op('@>')(db_user.interests))
-    
+    query = query.where(User.uid == uid)
     result = query.order_by(func.random()).limit(10).all()
 
     #print(f"[INFO] QUERY: {query}")
