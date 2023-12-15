@@ -27,9 +27,8 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest httpx coverage
-        export TEST_DB_URL="postgresql://test:1234@localhost:5432/testdb"
     - name: Run unit tests
-      run: coverage run -m pytest .
+      run: TEST_DB_URL="postgresql://test:1234@localhost:5432/testdb" coverage run -m pytest .
       
     - name: Generate coverage reports
       run: coverage xml
