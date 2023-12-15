@@ -86,7 +86,7 @@ def read_recommended(db: Session, uid: str):
     result = query.order_by(func.random()).limit(10).all()
 
     #print(f"[INFO] QUERY: {query}")
-    print(f"[INFO] RESULT: {matching_users}")
+    #print(f"[INFO] RESULT: {matching_users}")
     return result 
 
 
