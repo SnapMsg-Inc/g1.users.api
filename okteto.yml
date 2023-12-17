@@ -1,0 +1,26 @@
+name: g1.users.api
+
+build:
+  users-api:
+    context: . 
+    
+deploy:
+  - helm upgrade --install users-ms chart
+    --set api.image=${OKTETO_BUILD_USERS_API_IMAGE}
+dev:
+  users-api:
+    command: ddtrace-run uvicorn src.main:app --host 0.0.0.0 --port 3001 --reload
+    forward:
+      - 3001:3001
+      - 5432:users-db:5432
+      - 8126:datadog-agent:8126
+      - 8125:datadog-agent:8125
+    sync:
+      - .:/usr/snapmsg-users
+
+  datadog-agent:
+    forward:
+      - 8126:8126
+      - 8125:8125
+#    sync:
+#      - ./ddconf.yml:/etc/datadog-agent/conf.d/datadog.yml
