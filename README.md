@@ -4,7 +4,7 @@
 
 A microservice component for the SnapMsg API.
 
-### Usage
+## Usage
 To run the api a makefile is provided, list all rules by running `make help`
 
 
